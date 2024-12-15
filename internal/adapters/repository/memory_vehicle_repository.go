@@ -2,9 +2,8 @@ package repository
 
 import (
 	"fmt"
-	"vehicle-registration-manager/internal/core/domain"
-
 	"sync"
+	"vehicle-registration-manager/internal/core/domain"
 )
 
 type MemoryVehicleRepository struct {
@@ -43,4 +42,11 @@ func (r *MemoryVehicleRepository) FindAll() ([]domain.Vehicle, error) {
 		vehicles = append(vehicles, v)
 	}
 	return vehicles, nil
+}
+
+func (r *MemoryVehicleRepository) FindByID(id string) (domain.Vehicle, error) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	return r.vehicles[id], nil
 }

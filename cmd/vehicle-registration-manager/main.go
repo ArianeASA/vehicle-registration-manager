@@ -13,20 +13,20 @@ import (
 	"vehicle-registration-manager/internal/app/usecase"
 )
 
-// @title Vehicle API
-// @version 1.0
-// @description This is a sample server Vehicle server.
-// @termsOfService http://swagger.io/terms/
+//	@title			Vehicle Registration Manager API
+//	@version		1.0
+//	@description	This is a sample server Vehicle server.
+//	@termsOfService	http://swagger.io/terms/
 
-// @contact.name Vehicle API Support
-// @contact.url http://www.swagger.io/support
-// @contact.email support@swagger.io
+//	@contact.name	Vehicle API Support
+//	@contact.url	http://www.swagger.io/support
+//	@contact.email	support@swagger.io
 
-// @license.name Apache 2.0
-// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+//	@license.name	Apache 2.0
+//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host localhost:8080
-// @BasePath /
+// @host		localhost:8080
+// @BasePath	/
 func main() {
 	app := fx.New(
 		fx.Provide(
@@ -34,6 +34,7 @@ func main() {
 			usecase.NewRegisterVehicle,
 			usecase.NewUpdateVehicle,
 			usecase.NewListVehicles,
+			usecase.NewSearchVehicle,
 			vehicleHttp.NewVehicleHandler,
 			mux.NewRouter,
 		),
