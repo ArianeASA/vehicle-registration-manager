@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"vehicle-registration-manager/cmd/vehicle-registration-manager/configs"
+	routes "vehicle-registration-manager/internal/adapters/http"
 	vehicleHttp "vehicle-registration-manager/internal/adapters/http/handlers"
 	"vehicle-registration-manager/internal/adapters/repository"
 	"vehicle-registration-manager/internal/app/usecase"
@@ -38,17 +39,18 @@ func main() {
 			vehicleHttp.NewVehicleHandler,
 			mux.NewRouter,
 		),
+		fx.Invoke(
+			configs.RegisterHealthCheckRoutes,
+			configs.RegisterSwaggerRoutes,
+			routes.RegisterRoutes),
+
 		fx.Invoke(registerHooks),
 	)
 
 	app.Run()
 }
 
-func registerHooks(lifecycle fx.Lifecycle, router *mux.Router, handler *vehicleHttp.VehicleHandler) {
-	configs.RegisterHealthCheckRoutes(router)
-	configs.RegisterSwaggerRoutes(router)
-	handler.RegisterRoutes(router)
-
+func registerHooks(lifecycle fx.Lifecycle, router *mux.Router) {
 	var srv *http.Server
 	lifecycle.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
