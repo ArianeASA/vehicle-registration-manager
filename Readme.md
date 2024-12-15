@@ -39,6 +39,11 @@ The server will start on http://localhost:8080.
 ### API Documentation
 The API documentation is available in the docs/swagger.json file. You can use Swagger UI to visualize and interact with the API.  
 
+```shell
+swag init -g cmd/vehicle-registration-manager/main.go
+```
+link: http://localhost:8080/swagger/index.html
+
 ### Contributing
 Fork the repository
 - Create a new branch (git checkout -b feature/your-feature)

@@ -4,9 +4,16 @@ import (
 	"encoding/json"
 	"net/http"
 	"vehicle-registration-manager/internal/adapters/http/requests"
-	"vehicle-registration-manager/internal/core/domain"
 )
 
+// @Title			Register Vehicle
+// @Description	Register vehicle
+// @Tags			vehicles
+// @Accept			json
+// @Produce		json
+// @Success		201
+// @Param			vehicle	body	requests.Vehicle	true	"Object Vehicle"	example({"brand":"string","model":"string","year":2022,"color":"string","price":4744.32})
+// @Router			/vehicles/register [post]
 func (h *VehicleHandler) handleRegisterVehicle(w http.ResponseWriter, r *http.Request) {
 
 	var vehicle requests.Vehicle
@@ -14,14 +21,8 @@ func (h *VehicleHandler) handleRegisterVehicle(w http.ResponseWriter, r *http.Re
 		http.Error(w, "Bad request", http.StatusBadRequest)
 		return
 	}
-	vehicleDomain := domain.Vehicle{
-		Brand: vehicle.Brand,
-		Model: vehicle.Model,
-		Year:  vehicle.Year,
-		Color: vehicle.Color,
-		Price: vehicle.Price,
-	}
-	if err := h.registerVehicle.Execute(vehicleDomain); err != nil {
+	domain := h.mapNewRequestVehicleToDomainVehicle(vehicle)
+	if err := h.registerVehicle.Execute(domain); err != nil {
 		http.Error(w, "Failed to register vehicle", http.StatusInternalServerError)
 		return
 	}

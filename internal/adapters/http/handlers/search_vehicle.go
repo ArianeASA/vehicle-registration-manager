@@ -5,14 +5,14 @@ import (
 	"net/http"
 )
 
-// @Title			List Vehicles
-// @Description	List vehicles
+// @Title			Search Vehicle
+// @Description	Search vehicle By ID
 // @Tags			vehicles
 // @Accept			json
 // @Produce		json
-// @Success		200	{object}	[]responses.Vehicle
-// @Router			/vehicles [get]
-func (h *VehicleHandler) handleListVehicles(w http.ResponseWriter, r *http.Request) {
+// @Success		200	{object}	responses.Vehicle
+// @Router			/vehicles/{id} [get]
+func (h *VehicleHandler) handleSearchVehiclesByID(w http.ResponseWriter, r *http.Request) {
 	domains, err := h.listVehicles.Execute()
 	if err != nil {
 		http.Error(w, "Failed to list vehicles", http.StatusInternalServerError)

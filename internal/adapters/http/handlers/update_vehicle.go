@@ -2,12 +2,22 @@ package handlers
 
 import (
 	"encoding/json"
+	"github.com/gorilla/mux"
 	"net/http"
 	"strings"
 	"vehicle-registration-manager/internal/adapters/http/requests"
-	"vehicle-registration-manager/internal/core/domain"
 )
 
+// @Title			Update Vehicle
+// @Summary		update a task status
+// @Description	Update vehicle
+// @Tags			vehicles
+// @Accept			json
+// @Produce		json
+// @Success		200
+// @Param			id		path	string				false	"Vehicle ID"
+// @Param			vehicle	body	requests.Vehicle	true	"Vehicle"	example({"brand":"string","model":"string","year":2022,"color":"string","price":474432})
+// @Router			/vehicles/{id} [put]
 func (h *VehicleHandler) handleUpdateVehicle(w http.ResponseWriter, r *http.Request) {
 
 	var vehicle requests.Vehicle
@@ -16,22 +26,16 @@ func (h *VehicleHandler) handleUpdateVehicle(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	id := r.PathValue("id")
+	vars := mux.Vars(r)
+	id := vars["id"]
 	if strings.EqualFold("", id) {
 		http.Error(w, "Bad request", http.StatusBadRequest)
 		return
 	}
 
-	vehicleDomain := domain.Vehicle{
-		ID:    id,
-		Brand: vehicle.Brand,
-		Model: vehicle.Model,
-		Year:  vehicle.Year,
-		Color: vehicle.Color,
-		Price: vehicle.Price,
-	}
-
-	if err := h.updateVehicle.Execute(vehicleDomain); err != nil {
+	domain := h.mapRequestVehicleToDomainVehicle(vehicle)
+	domain.ID = id
+	if err := h.updateVehicle.Execute(domain); err != nil {
 		http.Error(w, "Failed to update vehicle", http.StatusInternalServerError)
 		return
 	}
