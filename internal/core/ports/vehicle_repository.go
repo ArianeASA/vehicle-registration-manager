@@ -6,4 +6,5 @@ type VehicleRepository interface {
 	Save(vehicle domain.Vehicle) error
 	Update(vehicle domain.Vehicle) error
 	FindAll() ([]domain.Vehicle, error)
+	FindByID(id string) (domain.Vehicle, error)
 }

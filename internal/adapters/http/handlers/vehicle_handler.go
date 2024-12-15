@@ -1,31 +1,45 @@
 package handlers
 
 import (
-	"github.com/gorilla/mux"
+	"vehicle-registration-manager/internal/adapters/http/mappers"
+	"vehicle-registration-manager/internal/adapters/http/requests"
+	"vehicle-registration-manager/internal/adapters/http/responses"
 	"vehicle-registration-manager/internal/app/usecase"
+	"vehicle-registration-manager/internal/core/domain"
 )
 
 type VehicleHandler struct {
 	registerVehicle *usecase.RegisterVehicle
 	updateVehicle   *usecase.UpdateVehicle
 	listVehicles    *usecase.ListVehicles
+	searchVehicle   *usecase.SearchVehicle
 }
 
 func NewVehicleHandler(
 	registerVehicle *usecase.RegisterVehicle,
 	updateVehicle *usecase.UpdateVehicle,
 	listVehicles *usecase.ListVehicles,
+	searchVehicle *usecase.SearchVehicle,
 ) *VehicleHandler {
 	return &VehicleHandler{
 		registerVehicle: registerVehicle,
 		updateVehicle:   updateVehicle,
 		listVehicles:    listVehicles,
+		searchVehicle:   searchVehicle,
 	}
 }
 
-func (h *VehicleHandler) RegisterRoutes(router *mux.Router) {
+func (h *VehicleHandler) mapDomainToResponseVehicle(domains domain.Vehicle) responses.Vehicle {
+	return mappers.DomainVehicleToResponseVehicle(domains)
+}
 
-	router.HandleFunc("/vehicles", h.handleListVehicles).Methods("GET")
-	router.HandleFunc("/vehicles/register", h.handleRegisterVehicle).Methods("POST")
-	router.HandleFunc("/vehicles/update/{id}", h.handleUpdateVehicle).Methods("PUT")
+func (h *VehicleHandler) mapRequestVehicleToDomainVehicle(vehicle requests.Vehicle) domain.Vehicle {
+	return mappers.RequestVehicleToDomainVehicle(vehicle)
+}
+func (h *VehicleHandler) mapNewRequestVehicleToDomainVehicle(vehicle requests.Vehicle) domain.Vehicle {
+	return mappers.NewRequestVehicleToDomainVehicle(vehicle)
+}
+
+func (h *VehicleHandler) mapDomainVehiclesToResponseVehicles(domains []domain.Vehicle) []responses.Vehicle {
+	return mappers.DomainVehiclesToResponseVehicles(domains)
 }

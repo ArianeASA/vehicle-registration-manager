@@ -2,6 +2,8 @@ package repository
 
 import (
 	"database/sql"
+	"vehicle-registration-manager/internal/adapters/repository/entities"
+	"vehicle-registration-manager/internal/adapters/repository/mappers"
 	"vehicle-registration-manager/internal/core/domain"
 )
 
@@ -38,11 +40,21 @@ func (r *SQLVehicleRepository) FindAll() ([]domain.Vehicle, error) {
 
 	var vehicles []domain.Vehicle
 	for rows.Next() {
-		var vehicle domain.Vehicle
+		var vehicle entities.Vehicle
 		if err := rows.Scan(&vehicle.ID, &vehicle.Brand, &vehicle.Model, &vehicle.Year, &vehicle.Color, &vehicle.Price); err != nil {
 			return nil, err
 		}
-		vehicles = append(vehicles, vehicle)
+		vehicles = append(vehicles, mappers.EntityToDomain(vehicle))
 	}
 	return vehicles, nil
+}
+
+func (r *SQLVehicleRepository) FindByID(id string) (domain.Vehicle, error) {
+	row := r.db.QueryRow("SELECT id, brand, model, year, color, price FROM vehicles WHERE id=?", id)
+	var vehicle entities.Vehicle
+	if err := row.Scan(&vehicle.ID, &vehicle.Brand, &vehicle.Model, &vehicle.Year, &vehicle.Color, &vehicle.Price); err != nil {
+		return domain.Vehicle{}, err
+	}
+
+	return mappers.EntityToDomain(vehicle), nil
 }
