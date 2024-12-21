@@ -27,13 +27,14 @@ jobs:
           go test -coverprofile=coverage.txt ./...
 
       - name: Generate coverage report
+        uses: actions/checkout@v3
         with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+          tokens: ${{ secrets.GITHUB_TOKEN }}
         run: |
           go tool cover -func=coverage.txt > coverage-summary.txt
 
       - name: Test Summary
         uses: mattn/golang-scc-action@v1.0.0
         with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        format: table
+          token: ${{ secrets.GITHUB_TOKEN }}
+          format: table
