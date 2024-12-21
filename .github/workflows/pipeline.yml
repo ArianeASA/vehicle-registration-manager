@@ -28,7 +28,7 @@ jobs:
 
       - name: Generate coverage report
         with:
-        tokens: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.GITHUB_TOKEN }}
         run: |
           go tool cover -func=coverage.txt > coverage-summary.txt
 
