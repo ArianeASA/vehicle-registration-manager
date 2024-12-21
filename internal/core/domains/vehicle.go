@@ -1,6 +1,13 @@
-package domain
+package domains
 
-import "strings"
+import (
+	"errors"
+	"strings"
+)
+
+var (
+	ErrVehicleNotFound = errors.New("vehicle not found")
+)
 
 type Vehicle struct {
 	ID    string

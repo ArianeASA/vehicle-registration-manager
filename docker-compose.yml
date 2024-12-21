@@ -1,0 +1,42 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=yourusername
+      - DB_PASSWORD=yourpassword
+      - DB_NAME=dealership
+      - DRIVER_NAME=postgres
+      - DB_SCHEMA=prod
+      - SCOPE=prod
+    depends_on:
+        - postgres
+    networks:
+      - dev_to
+
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=yourusername
+      - POSTGRES_PASSWORD=yourpassword
+      - POSTGRES_DB=dealership
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - dev_to
+volumes:
+  postgres_data:
+
+networks:
+  dev_to:
+    name: dev_to
+
+#    create database dealershipp;

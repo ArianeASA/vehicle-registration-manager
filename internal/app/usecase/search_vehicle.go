@@ -1,18 +1,20 @@
 package usecase
 
 import (
-	"vehicle-registration-manager/internal/core/domain"
-	"vehicle-registration-manager/internal/core/ports"
+	"vehicle-registration-manager/internal/core/domains"
+	"vehicle-registration-manager/internal/core/ports/out"
+	"vehicle-registration-manager/pkg/tracer"
 )
 
 type SearchVehicle struct {
-	repo ports.VehicleRepository
+	repo out.VehicleRepository
 }
 
-func NewSearchVehicle(repo ports.VehicleRepository) *SearchVehicle {
+func NewSearchVehicle(repo out.VehicleRepository) *SearchVehicle {
 	return &SearchVehicle{repo: repo}
 }
 
-func (uc *SearchVehicle) Execute(id string) (domain.Vehicle, error) {
-	return uc.repo.FindByID(id)
+func (uc *SearchVehicle) Execute(tcr *tracer.Tracer, id string) (domains.Vehicle, error) {
+	tcr.Logger.Info("Init search vehicle")
+	return uc.repo.FindByID(tcr, id)
 }

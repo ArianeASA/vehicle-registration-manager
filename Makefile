@@ -1,10 +1,8 @@
 .PHONY: all run doc
 
-# Variáveis
 APP_NAME=vehicle-registration-manager
 DOCS_DIR=docs
 
-# Comandos
 all: run
 
 run:
@@ -15,13 +13,19 @@ doc:
 	@echo "Generating API documentation..."
 	swag init -g cmd/$(APP_NAME)/main.go -o $(DOCS_DIR)
 
-# Limpeza
 clean:
 	@echo "Cleaning up..."
 	go clean
 	rm -rf $(DOCS_DIR)/*
 
-# Ajuda
+docker-up:
+	@echo "Starting the application with Docker Compose..."
+	docker-compose up --build -d
+
+docker-down:
+	@echo "Stopping the application with Docker Compose..."
+	docker-compose down
+
 help:
 	@echo "Makefile commands:"
 	@echo "  run   - Run the application"
