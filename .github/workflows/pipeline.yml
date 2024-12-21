@@ -27,7 +27,6 @@ jobs:
           go test -coverprofile=coverage.txt ./...
 
       - name: Generate coverage report
-        uses: actions/checkout@v3
         with:
         tokens: ${{ secrets.GITHUB_TOKEN }}
         run: |
