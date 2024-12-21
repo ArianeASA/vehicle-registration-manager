@@ -1,0 +1,172 @@
+basePath: /
+definitions:
+  http_errors.ProblemDetails:
+    properties:
+      detail:
+        type: string
+      instance:
+        type: string
+      status:
+        type: integer
+      title:
+        type: string
+      type:
+        type: string
+    type: object
+  requests.Vehicle:
+    properties:
+      brand:
+        type: string
+      color:
+        type: string
+      model:
+        type: string
+      price:
+        type: number
+      year:
+        type: integer
+    type: object
+  responses.Vehicle:
+    properties:
+      brand:
+        type: string
+      color:
+        type: string
+      id:
+        type: string
+      model:
+        type: string
+      price:
+        type: number
+      year:
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: Vehicle API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server Vehicle server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Vehicle Registration Manager API
+  version: "1.0"
+paths:
+  /vehicles:
+    get:
+      consumes:
+      - application/json
+      description: List vehicles
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.Vehicle'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http_errors.ProblemDetails'
+      tags:
+      - vehicles
+  /vehicles/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Search vehicle By ID
+      parameters:
+      - description: Vehicle ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.Vehicle'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http_errors.ProblemDetails'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http_errors.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http_errors.ProblemDetails'
+      tags:
+      - vehicles
+    put:
+      consumes:
+      - application/json
+      description: Update vehicle
+      parameters:
+      - description: Vehicle ID
+        in: path
+        name: id
+        type: string
+      - description: Vehicle
+        in: body
+        name: vehicle
+        required: true
+        schema:
+          $ref: '#/definitions/requests.Vehicle'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http_errors.ProblemDetails'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http_errors.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http_errors.ProblemDetails'
+      summary: update a task status
+      tags:
+      - vehicles
+  /vehicles/register:
+    post:
+      consumes:
+      - application/json
+      description: Register vehicle
+      parameters:
+      - description: Object Vehicle
+        in: body
+        name: vehicle
+        required: true
+        schema:
+          $ref: '#/definitions/requests.Vehicle'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http_errors.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http_errors.ProblemDetails'
+      tags:
+      - vehicles
+swagger: "2.0"
