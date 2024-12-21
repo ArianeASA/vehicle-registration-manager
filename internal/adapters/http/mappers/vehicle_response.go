@@ -2,10 +2,10 @@ package mappers
 
 import (
 	"vehicle-registration-manager/internal/adapters/http/responses"
-	"vehicle-registration-manager/internal/core/domain"
+	"vehicle-registration-manager/internal/core/domains"
 )
 
-func DomainVehicleToResponseVehicle(vehicle domain.Vehicle) responses.Vehicle {
+func DomainVehicleToResponseVehicle(vehicle domains.Vehicle) responses.Vehicle {
 	return responses.Vehicle{
 		Id:    vehicle.ID,
 		Brand: vehicle.Brand,
@@ -16,7 +16,7 @@ func DomainVehicleToResponseVehicle(vehicle domain.Vehicle) responses.Vehicle {
 	}
 }
 
-func DomainVehiclesToResponseVehicles(vehicles []domain.Vehicle) []responses.Vehicle {
+func DomainVehiclesToResponseVehicles(vehicles []domains.Vehicle) []responses.Vehicle {
 	var responseVehicles []responses.Vehicle
 	for _, vehicle := range vehicles {
 		responseVehicles = append(responseVehicles, DomainVehicleToResponseVehicle(vehicle))

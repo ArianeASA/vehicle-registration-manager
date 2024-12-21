@@ -11,6 +11,7 @@ import (
 	routes "vehicle-registration-manager/internal/adapters/http"
 	vehicleHttp "vehicle-registration-manager/internal/adapters/http/handlers"
 	"vehicle-registration-manager/internal/adapters/repository"
+	configsDB "vehicle-registration-manager/internal/adapters/repository/configs"
 	"vehicle-registration-manager/internal/app/usecase"
 )
 
@@ -29,9 +30,15 @@ import (
 // @host		localhost:8080
 // @BasePath	/
 func main() {
+	configsDatabase := configsDB.NewDatabaseConfig()
+	_, err := configsDatabase.InitDatabase()
+	if err != nil {
+		log.Fatalf("failed to initialize database: %v", err)
+	}
 	app := fx.New(
+		fx.Supply(configsDatabase),
 		fx.Provide(
-			repository.NewVehicleRepository,
+			repository.VehicleRepositoryFactory,
 			usecase.NewRegisterVehicle,
 			usecase.NewUpdateVehicle,
 			usecase.NewListVehicles,
@@ -50,7 +57,7 @@ func main() {
 	app.Run()
 }
 
-func registerHooks(lifecycle fx.Lifecycle, router *mux.Router) {
+func registerHooks(lifecycle fx.Lifecycle, router *mux.Router, config *configsDB.DatabaseConfig) {
 	var srv *http.Server
 	lifecycle.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
@@ -68,6 +75,7 @@ func registerHooks(lifecycle fx.Lifecycle, router *mux.Router) {
 			return nil
 		},
 		OnStop: func(ctx context.Context) error {
+			config.Close()
 			return srv.Shutdown(ctx)
 		},
 	})
