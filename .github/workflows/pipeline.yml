@@ -30,7 +30,9 @@ jobs:
           go tool cover -func=coverage.txt > coverage-summary.txt
 
       - name: Test Summary
-        uses: mattn/golang-scc-action@v1.0.0
+        uses: actions/github-script@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          format: table
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('coverage-summary.txt', 'utf8');
+            console.log(summary);
