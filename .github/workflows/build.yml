@@ -22,4 +22,8 @@ jobs:
           SONAR_SOURCE_LANGUAGE: go
           SONAR_COBRA_FORMAT: false
           SONAR_GO_TEST: go test
-          SONAR_GO_COVERAGE: go test -coverprofile=coverage.out ./...
+          SONAR_GO_COVERAGE: go test -coverprofile=${GITHUB_WORKSPACE}/coverage.out ./...
+
+      - name: Check file permissions
+        run: ls -l coverage.out
+
