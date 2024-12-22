@@ -1,3 +1,5 @@
+[![SonarQube Pipeline](https://github.com/ArianeASA/vehicle-registration-manager/actions/workflows/sonar.yml/badge.svg)](https://github.com/ArianeASA/vehicle-registration-manager/actions/workflows/sonar.yml)
+[![Pre-deployment Pipeline](https://github.com/ArianeASA/vehicle-registration-manager/actions/workflows/build.yml/badge.svg)](https://github.com/ArianeASA/vehicle-registration-manager/actions/workflows/build.yml)
 # Vehicle API
 
 This project is a sample server for managing vehicles, built with Go.
