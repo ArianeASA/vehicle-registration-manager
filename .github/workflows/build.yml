@@ -18,3 +18,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_SOURCE_LANGUAGE: go
+          SONAR_COBRA_FORMAT: false
+          SONAR_GO_TEST: go test
+          SONAR_GO_COVERAGE: go test -coverprofile=coverage.out ./...
