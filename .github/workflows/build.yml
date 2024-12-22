@@ -24,6 +24,3 @@ jobs:
           SONAR_GO_TEST: go test
           SONAR_GO_COVERAGE: go test -coverprofile=${GITHUB_WORKSPACE}/coverage.out ./...
 
-      - name: Check file permissions
-        run: ls -l coverage.out
-
