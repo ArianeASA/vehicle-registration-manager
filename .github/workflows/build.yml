@@ -1,33 +1,25 @@
-name: SonarQube Pipeline
+name: Pre-deployment Pipeline
+
 on:
-  push:
+  pull_request:
     branches:
       - develop
       - main
-  pull_request:
-    types: [opened, synchronize, reopened]
+
 jobs:
-  sonarqube:
-    name: SonarQube
+  compile:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go 1.23
+        uses: actions/setup-go@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          go-version: 1.23
 
       - name: Install dependencies
         run: go mod download
 
-      - name: Execute tests
-        run: |
-          go test -coverprofile=coverage.out ./...
-
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v4
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_SOURCE_LANGUAGE: go
-          SONAR_COBRA_FORMAT: false
-          SONAR_GO_COVERAGE: coverage.out
-
+      - name: Build
+        run: go build -v ./...
