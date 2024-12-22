@@ -1,4 +1,4 @@
-name: Build
+name: SonarQube Pipeline
 on:
   push:
     branches:
@@ -29,6 +29,5 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_SOURCE_LANGUAGE: go
           SONAR_COBRA_FORMAT: false
-#          SONAR_GO_TEST: go test
           SONAR_GO_COVERAGE: coverage.out
 
