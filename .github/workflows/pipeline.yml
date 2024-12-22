@@ -11,8 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Set up Go 1.23
         uses: actions/setup-go@v4
         with:
@@ -21,18 +22,20 @@ jobs:
       - name: Install dependencies
         run: go mod download
 
-      - name: Run unit tests
+      - name: Execute tests
         run: |
-          go test -coverprofile=coverage.txt ./...
+          go test -coverprofile=coverage.out ./...
 
-      - name: Generate coverage report
+      - name: Convert coverage to XML
         run: |
-          go tool cover -func=coverage.txt > coverage-summary.txt
+          go tool cover -func=coverage.out > coverage.xml
 
-      - name: Test Summary
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const fs = require('fs');
-            const summary = fs.readFileSync('coverage-summary.txt', 'utf8');
-            console.log(summary);
+      - name: Convert coverage to XML
+        run: |
+          go tool cover -func=coverage.out > coverage.xml
+          
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
