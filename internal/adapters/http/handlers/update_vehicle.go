@@ -19,11 +19,11 @@ import (
 // @Accept			json
 // @Produce		json
 // @Success		200
-// @Failure		404 {object} http_errors.ProblemDetails
-// @Failure		500 {object} http_errors.ProblemDetails
-// @Failure		400 {object} http_errors.ProblemDetails
-// @Param			id		path	string				false	"Vehicle ID"
-// @Param			vehicle	body	requests.Vehicle	true	"Vehicle"	example({"brand":"string","model":"string","year":2022,"color":"string","price":474432})
+// @Failure		404		{object}	http_errors.ProblemDetails
+// @Failure		500		{object}	http_errors.ProblemDetails
+// @Failure		400		{object}	http_errors.ProblemDetails
+// @Param			id		path		string				false	"Vehicle ID"
+// @Param			vehicle	body		requests.Vehicle	true	"Vehicle"	example({"brand":"string","model":"string","year":2022,"color":"string","price":474432})
 // @Router			/vehicles/{id} [put]
 func (h *VehicleHandler) HandleUpdateVehicle(w http.ResponseWriter, r *http.Request) {
 	trc := tracer.NewTracer(r)

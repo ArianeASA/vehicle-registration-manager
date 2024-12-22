@@ -15,10 +15,10 @@ import (
 // @Accept			json
 // @Produce		json
 // @Success		200	{object}	responses.Vehicle
-// @Failure		404 {object} http_errors.ProblemDetails
-// @Failure		500 {object} http_errors.ProblemDetails
-// @Failure		400 {object} http_errors.ProblemDetails
-// @Param			id	path	string	true	"Vehicle ID"
+// @Failure		404	{object}	http_errors.ProblemDetails
+// @Failure		500	{object}	http_errors.ProblemDetails
+// @Failure		400	{object}	http_errors.ProblemDetails
+// @Param			id	path		string	true	"Vehicle ID"
 // @Router			/vehicles/{id} [get]
 func (h *VehicleHandler) HandleSearchVehicleByID(w http.ResponseWriter, r *http.Request) {
 	trc := tracer.NewTracer(r)
