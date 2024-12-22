@@ -79,6 +79,10 @@ func (l *Logger) logError(msg string, err error, level LogLevel) {
 	if l.handler == nil {
 		return
 	}
+	var errString string
+	if err != nil {
+		errString = err.Error()
+	}
 	record := LogRecord{
 		Time:     time.Now().Local(),
 		Level:    level.String(),
@@ -86,7 +90,7 @@ func (l *Logger) logError(msg string, err error, level LogLevel) {
 		Message:  msg,
 		TracerID: l.tracerID,
 		AppName:  l.appName,
-		Error:    err.Error(),
+		Error:    errString,
 	}
 
 	if l.level <= level {
@@ -95,7 +99,7 @@ func (l *Logger) logError(msg string, err error, level LogLevel) {
 }
 
 func NewLogger(level LogLevel) *Logger {
-	logg := &Logger{level: level}
+	logg := &Logger{level: level, appName: os.Getenv(AppName)}
 	return logger(logg)
 }
 

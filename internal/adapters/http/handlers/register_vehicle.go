@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"vehicle-registration-manager/internal/adapters/http/requests"
+	httpErrors "vehicle-registration-manager/pkg/http_errors"
 	"vehicle-registration-manager/pkg/tracer"
 )
 
@@ -12,6 +13,8 @@ import (
 // @Tags			vehicles
 // @Accept			json
 // @Produce		json
+// @Failure		500 {object} http_errors.ProblemDetails
+// @Failure		400 {object} http_errors.ProblemDetails
 // @Success		201
 // @Param			vehicle	body	requests.Vehicle	true	"Object Vehicle"	example({"brand":"string","model":"string","year":2022,"color":"string","price":4744.32})
 // @Router			/vehicles/register [post]
@@ -19,15 +22,17 @@ func (h *VehicleHandler) HandleRegisterVehicle(w http.ResponseWriter, r *http.Re
 	trc := tracer.NewTracer(r)
 	var vehicle requests.Vehicle
 	if err := json.NewDecoder(r.Body).Decode(&vehicle); err != nil {
-		http.Error(w, "Bad request", http.StatusBadRequest)
-		trc.Logger.Errorf("Failed to decode request body", nil, err)
+		msg := "Failed to decode request body"
+		trc.Logger.Error(msg, err)
+		httpErrors.WriteProblemDetails(w, httpErrors.BadRequest(msg, r.RequestURI))
 		return
 	}
 	trc.Logger.Infof("Received request body %+v", vehicle)
 	domain := h.mapNewRequestVehicleToDomainVehicle(vehicle)
 	if err := h.registerVehicle.Execute(trc, domain); err != nil {
-		trc.Logger.Errorf("Failed to register vehicle", nil, err)
-		http.Error(w, "Failed to register vehicle", http.StatusInternalServerError)
+		msg := "Failed to register vehicle"
+		trc.Logger.Error(msg, err)
+		httpErrors.WriteProblemDetails(w, httpErrors.InternalServerError(msg, r.RequestURI))
 		return
 	}
 	trc.Logger.Info("Vehicle registered")

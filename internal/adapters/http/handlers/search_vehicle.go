@@ -5,6 +5,7 @@ import (
 	"github.com/gorilla/mux"
 	"net/http"
 	"strings"
+	httpErrors "vehicle-registration-manager/pkg/http_errors"
 	"vehicle-registration-manager/pkg/tracer"
 )
 
@@ -14,31 +15,35 @@ import (
 // @Accept			json
 // @Produce		json
 // @Success		200	{object}	responses.Vehicle
-// @Failure		404
-// @Failure		500
-// @Param			id	path	string	true	"Vehicle ID"
+// @Failure		404	{object}	http_errors.ProblemDetails
+// @Failure		500	{object}	http_errors.ProblemDetails
+// @Failure		400	{object}	http_errors.ProblemDetails
+// @Param			id	path		string	true	"Vehicle ID"
 // @Router			/vehicles/{id} [get]
 func (h *VehicleHandler) HandleSearchVehicleByID(w http.ResponseWriter, r *http.Request) {
 	trc := tracer.NewTracer(r)
 	vars := mux.Vars(r)
 	id := vars["id"]
 	if strings.EqualFold("", id) {
-		http.Error(w, "Bad request", http.StatusBadRequest)
+		msg := "Invalid id"
+		httpErrors.WriteProblemDetails(w, httpErrors.BadRequest(msg, r.RequestURI))
 		return
 	}
 
 	trc.Logger.Infof("Received request id %s", id)
 
-	domain, err := h.searchVehicle.Execute(id)
+	domain, err := h.searchVehicle.Execute(trc, id)
 	if err != nil {
-		trc.Logger.Errorf("Failed to list vehicles", nil, err)
-		http.Error(w, "Failed to list vehicles", http.StatusInternalServerError)
+		msg := "Failed to search vehicles"
+		trc.Logger.Error(msg, err)
+		httpErrors.WriteProblemDetails(w, httpErrors.InternalServerError(msg, r.RequestURI))
 		return
 	}
 
 	if !domain.Exist() {
-		trc.Logger.Errorf("Vehicle not found", nil)
-		http.Error(w, "Vehicle not found", http.StatusNotFound)
+		msg := "Vehicle not found"
+		trc.Logger.Errorf(msg, nil)
+		httpErrors.WriteProblemDetails(w, httpErrors.NotFound(msg, r.RequestURI))
 		return
 	}
 

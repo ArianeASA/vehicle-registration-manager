@@ -5,7 +5,7 @@ import (
 	"vehicle-registration-manager/internal/adapters/http/requests"
 	"vehicle-registration-manager/internal/adapters/http/responses"
 	"vehicle-registration-manager/internal/app/usecase"
-	"vehicle-registration-manager/internal/core/domain"
+	"vehicle-registration-manager/internal/core/domains"
 )
 
 type VehicleHandler struct {
@@ -29,17 +29,17 @@ func NewVehicleHandler(
 	}
 }
 
-func (h *VehicleHandler) mapDomainToResponseVehicle(domains domain.Vehicle) responses.Vehicle {
+func (h *VehicleHandler) mapDomainToResponseVehicle(domains domains.Vehicle) responses.Vehicle {
 	return mappers.DomainVehicleToResponseVehicle(domains)
 }
 
-func (h *VehicleHandler) mapRequestVehicleToDomainVehicle(vehicle requests.Vehicle) domain.Vehicle {
+func (h *VehicleHandler) mapRequestVehicleToDomainVehicle(vehicle requests.Vehicle) domains.Vehicle {
 	return mappers.RequestVehicleToDomainVehicle(vehicle)
 }
-func (h *VehicleHandler) mapNewRequestVehicleToDomainVehicle(vehicle requests.Vehicle) domain.Vehicle {
+func (h *VehicleHandler) mapNewRequestVehicleToDomainVehicle(vehicle requests.Vehicle) domains.Vehicle {
 	return mappers.NewRequestVehicleToDomainVehicle(vehicle)
 }
 
-func (h *VehicleHandler) mapDomainVehiclesToResponseVehicles(domains []domain.Vehicle) []responses.Vehicle {
+func (h *VehicleHandler) mapDomainVehiclesToResponseVehicles(domains []domains.Vehicle) []responses.Vehicle {
 	return mappers.DomainVehiclesToResponseVehicles(domains)
 }
