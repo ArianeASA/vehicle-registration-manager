@@ -6,8 +6,8 @@ import (
 	"strings"
 )
 
-func getCallerInfo() string {
-	pc, _, line, ok := runtime.Caller(3)
+func getCallerInfo(skip int) string {
+	pc, _, line, ok := runtime.Caller(skip)
 	if !ok {
 		return "unknown:0"
 	}

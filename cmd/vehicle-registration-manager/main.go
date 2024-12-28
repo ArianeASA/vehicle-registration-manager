@@ -3,8 +3,10 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/gorilla/mux"
 	"go.uber.org/fx"
+	"go.uber.org/fx/fxevent"
 	"log"
 	"net/http"
 	"vehicle-registration-manager/cmd/vehicle-registration-manager/configs"
@@ -12,7 +14,8 @@ import (
 	vehicleHttp "vehicle-registration-manager/internal/adapters/http/handlers"
 	"vehicle-registration-manager/internal/adapters/repository"
 	configsDB "vehicle-registration-manager/internal/adapters/repository/configs"
-	"vehicle-registration-manager/internal/app/usecase"
+	usecase "vehicle-registration-manager/internal/app/usecase"
+	"vehicle-registration-manager/pkg/logger"
 )
 
 //	@title			Vehicle Registration Manager API
@@ -30,13 +33,8 @@ import (
 // @host		localhost:8080
 // @BasePath	/
 func main() {
-	configsDatabase := configsDB.NewDatabaseConfig()
-	_, err := configsDatabase.InitDatabase()
-	if err != nil {
-		log.Fatalf("failed to initialize database: %v", err)
-	}
 	app := fx.New(
-		fx.Supply(configsDatabase),
+		fx.Supply(configsDB.NewDatabaseConfig()),
 		fx.Provide(
 			repository.VehicleRepositoryFactory,
 			usecase.NewRegisterVehicle,
@@ -46,14 +44,22 @@ func main() {
 			vehicleHttp.NewVehicleHandler,
 			mux.NewRouter,
 		),
+		fx.WithLogger(func() fxevent.Logger {
+			return logger.NewFxLogger()
+		}),
+		fx.Invoke(func(configsDatabase *configsDB.DatabaseConfig) error {
+			if _, err := configsDatabase.InitDatabase(); err != nil {
+				return fmt.Errorf("failed to initialize database: %s", err.Error())
+			}
+			return nil
+		}),
 		fx.Invoke(
 			configs.RegisterHealthCheckRoutes,
 			configs.RegisterSwaggerRoutes,
-			routes.RegisterRoutes),
-
-		fx.Invoke(registerHooks),
+			routes.RegisterRoutes,
+			registerHooks,
+		),
 	)
-
 	app.Run()
 }
 

@@ -44,7 +44,11 @@ func (c *DatabaseConfig) isProd() bool {
 func (c *DatabaseConfig) InitDatabase() (*sql.DB, error) {
 	if c.isProd() {
 		db, err := sql.Open(c.DriverName, c.dataSourceName())
+		if err != nil {
+			return nil, err
+		}
 		c.db = db
+		err = db.Ping()
 		return db, err
 	}
 	return nil, nil
