@@ -27,6 +27,7 @@ type (
 		handler  Handler
 		tracerID string
 		appName  string
+		skip     int
 	}
 )
 
@@ -57,6 +58,11 @@ func (l LogLevel) String() string {
 	return "UNKNOWN"
 }
 
+func (l *Logger) WithSkip(skip int) *Logger {
+	l.skip = skip
+	return l
+}
+
 func (l *Logger) log(msg string, level LogLevel) {
 	if l.handler == nil {
 		return
@@ -64,7 +70,7 @@ func (l *Logger) log(msg string, level LogLevel) {
 	record := LogRecord{
 		Time:     time.Now().Local(),
 		Level:    level.String(),
-		Caller:   getCallerInfo(),
+		Caller:   getCallerInfo(l.skip),
 		Message:  msg,
 		TracerID: l.tracerID,
 		AppName:  l.appName,
@@ -84,9 +90,9 @@ func (l *Logger) logError(msg string, err error, level LogLevel) {
 		errString = err.Error()
 	}
 	record := LogRecord{
-		Time:     time.Now().Local(),
+		Time:     time.Now().UTC(),
 		Level:    level.String(),
-		Caller:   getCallerInfo(),
+		Caller:   getCallerInfo(l.skip),
 		Message:  msg,
 		TracerID: l.tracerID,
 		AppName:  l.appName,
@@ -105,7 +111,7 @@ func NewLogger(level LogLevel) *Logger {
 
 func NewLoggerWithTrace(tracerID string) *Logger {
 	level := getLevel()
-	logg := &Logger{level: level, tracerID: tracerID, appName: os.Getenv(AppName)}
+	logg := &Logger{level: level, tracerID: tracerID, appName: os.Getenv(AppName), skip: 3}
 	return logger(logg)
 }
 

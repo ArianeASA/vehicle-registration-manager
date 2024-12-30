@@ -15,7 +15,7 @@ import (
 // @Failure		500 {object} http_errors.ProblemDetails
 // @Success		200	{object}	[]responses.Vehicle
 // @Router			/vehicles [get]
-func (h *VehicleHandler) HandleListVehicles(w http.ResponseWriter, r *http.Request) {
+func (h *vehicleHandler) HandleListVehicles(w http.ResponseWriter, r *http.Request) {
 	trc := tracer.NewTracer(r)
 	domains, err := h.listVehicles.Execute(trc)
 	if err != nil {
