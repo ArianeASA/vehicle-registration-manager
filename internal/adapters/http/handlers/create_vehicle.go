@@ -18,7 +18,7 @@ import (
 // @Success		201
 // @Param			vehicle	body	requests.Vehicle	true	"Object Vehicle"	example({"brand":"string","model":"string","year":2022,"color":"string","price":4744.32})
 // @Router			/vehicles/register [post]
-func (h *VehicleHandler) HandleCreateVehicle(w http.ResponseWriter, r *http.Request) {
+func (h *vehicleHandler) HandleCreateVehicle(w http.ResponseWriter, r *http.Request) {
 	trc := tracer.NewTracer(r)
 	var vehicle requests.Vehicle
 	if err := json.NewDecoder(r.Body).Decode(&vehicle); err != nil {
