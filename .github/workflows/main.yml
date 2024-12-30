@@ -1,13 +1,8 @@
 on:
-#  push:
-#    branches: [ main ]
-#  pull_request:
-#    branches: [ main ]
-
   push:
-    branches: [ feature/* ]
+    branches: [ main ]
   pull_request:
-    branches: [ feature/* ]
+    branches: [ main ]
 
 name: AWS ECR push
 
