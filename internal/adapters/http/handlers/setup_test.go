@@ -7,10 +7,11 @@ import (
 	"vehicle-registration-manager/internal/app/usecase/list"
 	"vehicle-registration-manager/internal/app/usecase/search"
 	"vehicle-registration-manager/internal/app/usecase/update"
+	"vehicle-registration-manager/internal/core/ports/in"
 )
 
 var (
-	handler       *handlers.VehicleHandler
+	handler       in.VehicleHandler
 	router        *mux.Router
 	listVehicles  *list.MockListVehicles
 	createVehicle *create.MockCreateVehicle
