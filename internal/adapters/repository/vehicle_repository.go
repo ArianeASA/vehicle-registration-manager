@@ -14,8 +14,8 @@ type VehicleRepository struct {
 	db *sql.DB
 }
 
-func NewVehicleRepository(config *configs.DatabaseConfig) (*VehicleRepository, error) {
-	return &VehicleRepository{db: config.GetDB()}, nil
+func NewVehicleRepository(config configs.DatabaseConfigs) *VehicleRepository {
+	return &VehicleRepository{db: config.GetDB()}
 }
 
 const (
@@ -91,7 +91,7 @@ func (r *VehicleRepository) FindAll(tcr *tracer.Tracer) ([]domains.Vehicle, erro
 		var vehicle entities.Vehicle
 		if err := rows.Scan(&vehicle.ID, &vehicle.Brand, &vehicle.Model, &vehicle.Year, &vehicle.Color, &vehicle.Price); err != nil {
 			tcr.Logger.Error("failed to scan", err)
-			return nil, err
+			return nil, errors.New("failed to scan")
 		}
 		vehicles = append(vehicles, mappers.EntityToDomain(vehicle))
 	}

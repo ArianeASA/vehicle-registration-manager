@@ -7,43 +7,50 @@ import (
 	"os"
 )
 
-type DatabaseConfig struct {
-	Host       string
-	Port       string
-	User       string
-	Password   string
-	DBName     string
-	SSLMode    string
-	DriverName string
-	Schema     string
+type databaseConfig struct {
+	host       string
+	port       string
+	user       string
+	password   string
+	dBName     string
+	sslMode    string
+	driverName string
+	schema     string
 	db         *sql.DB
 }
 
-func NewDatabaseConfig() *DatabaseConfig {
-	return &DatabaseConfig{
-		Host:       os.Getenv("DB_HOST"),
-		Port:       os.Getenv("DB_PORT"),
-		User:       os.Getenv("DB_USER"),
-		Password:   os.Getenv("DB_PASSWORD"),
-		DBName:     os.Getenv("DB_NAME"),
-		DriverName: os.Getenv("DRIVER_NAME"),
-		Schema:     os.Getenv("DB_SCHEMA"),
-		SSLMode:    "disable",
+type DatabaseConfigs interface {
+	InitDatabase() (*sql.DB, error)
+	GetDB() *sql.DB
+	Close() error
+	Ping() error
+}
+
+func NewDatabaseConfig() DatabaseConfigs {
+	return &databaseConfig{
+		host:       os.Getenv("DB_HOST"),
+		port:       os.Getenv("DB_PORT"),
+		user:       os.Getenv("DB_USER"),
+		password:   os.Getenv("DB_PASSWORD"),
+		dBName:     os.Getenv("DB_NAME"),
+		driverName: os.Getenv("DRIVER_NAME"),
+		schema:     os.Getenv("DB_SCHEMA"),
+		sslMode:    "disable",
 	}
 }
 
-func (c *DatabaseConfig) dataSourceName() string {
+func (c *databaseConfig) dataSourceName() string {
 	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s search_path=%s",
-		c.Host, c.Port, c.User, c.Password, c.DBName, c.SSLMode, c.Schema)
+		c.host, c.port, c.user, c.password, c.dBName, c.sslMode, c.schema)
 }
 
-func (c *DatabaseConfig) isProd() bool {
+func (c *databaseConfig) isProd() bool {
 	return os.Getenv("SCOPE") == "prod"
 }
 
-func (c *DatabaseConfig) InitDatabase() (*sql.DB, error) {
+func (c *databaseConfig) InitDatabase() (*sql.DB, error) {
 	if c.isProd() {
-		db, err := sql.Open(c.DriverName, c.dataSourceName())
+		db, err := sql.Open(c.driverName, c.dataSourceName())
 		if err != nil {
 			return nil, err
 		}
@@ -54,18 +61,18 @@ func (c *DatabaseConfig) InitDatabase() (*sql.DB, error) {
 	return nil, nil
 }
 
-func (c *DatabaseConfig) GetDB() *sql.DB {
+func (c *databaseConfig) GetDB() *sql.DB {
 	return c.db
 }
 
-func (c *DatabaseConfig) Close() error {
+func (c *databaseConfig) Close() error {
 	if c.db != nil {
 		return c.db.Close()
 	}
 	return nil
 }
 
-func (c *DatabaseConfig) Ping() error {
+func (c *databaseConfig) Ping() error {
 	if c.isProd() {
 		if c.db != nil {
 			return c.db.Ping()

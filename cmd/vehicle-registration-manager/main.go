@@ -14,7 +14,10 @@ import (
 	vehicleHttp "vehicle-registration-manager/internal/adapters/http/handlers"
 	"vehicle-registration-manager/internal/adapters/repository"
 	configsDB "vehicle-registration-manager/internal/adapters/repository/configs"
-	usecase "vehicle-registration-manager/internal/app/usecase"
+	"vehicle-registration-manager/internal/app/usecase/create"
+	"vehicle-registration-manager/internal/app/usecase/list"
+	"vehicle-registration-manager/internal/app/usecase/search"
+	usecase "vehicle-registration-manager/internal/app/usecase/update"
 	"vehicle-registration-manager/pkg/logger"
 )
 
@@ -34,25 +37,28 @@ import (
 // @BasePath	/
 func main() {
 	app := fx.New(
-		fx.Supply(configsDB.NewDatabaseConfig()),
+		//fx.Supply(configsDB.NewDatabaseConfig()),
 		fx.Provide(
+			configsDB.NewDatabaseConfig,
 			repository.VehicleRepositoryFactory,
-			usecase.NewRegisterVehicle,
+			create.NewCreateVehicle,
 			usecase.NewUpdateVehicle,
-			usecase.NewListVehicles,
-			usecase.NewSearchVehicle,
+			list.NewListVehicles,
+			search.NewSearchVehicle,
 			vehicleHttp.NewVehicleHandler,
 			mux.NewRouter,
 		),
 		fx.WithLogger(func() fxevent.Logger {
 			return logger.NewFxLogger()
 		}),
-		fx.Invoke(func(configsDatabase *configsDB.DatabaseConfig) error {
-			if _, err := configsDatabase.InitDatabase(); err != nil {
-				return fmt.Errorf("failed to initialize database: %s", err.Error())
-			}
-			return nil
-		}),
+		fx.Invoke(
+			func(configsDatabase configsDB.DatabaseConfigs) error {
+				if _, err := configsDatabase.InitDatabase(); err != nil {
+					return fmt.Errorf("failed to initialize database: %s", err.Error())
+				}
+				return nil
+			},
+		),
 		fx.Invoke(
 			configs.RegisterHealthCheckRoutes,
 			configs.RegisterSwaggerRoutes,
@@ -63,7 +69,7 @@ func main() {
 	app.Run()
 }
 
-func registerHooks(lifecycle fx.Lifecycle, router *mux.Router, config *configsDB.DatabaseConfig) {
+func registerHooks(lifecycle fx.Lifecycle, router *mux.Router, config configsDB.DatabaseConfigs) {
 	var srv *http.Server
 	lifecycle.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {

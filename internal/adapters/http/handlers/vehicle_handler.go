@@ -4,28 +4,31 @@ import (
 	"vehicle-registration-manager/internal/adapters/http/mappers"
 	"vehicle-registration-manager/internal/adapters/http/requests"
 	"vehicle-registration-manager/internal/adapters/http/responses"
-	"vehicle-registration-manager/internal/app/usecase"
+	"vehicle-registration-manager/internal/app/usecase/create"
+	"vehicle-registration-manager/internal/app/usecase/list"
+	"vehicle-registration-manager/internal/app/usecase/search"
+	"vehicle-registration-manager/internal/app/usecase/update"
 	"vehicle-registration-manager/internal/core/domains"
 )
 
 type VehicleHandler struct {
-	registerVehicle *usecase.RegisterVehicle
-	updateVehicle   *usecase.UpdateVehicle
-	listVehicles    *usecase.ListVehicles
-	searchVehicle   *usecase.SearchVehicle
+	createVehicle create.CreateVehicle
+	updateVehicle update.UpdateVehicle
+	listVehicles  list.ListVehicles
+	searchVehicle search.SearchVehicle
 }
 
 func NewVehicleHandler(
-	registerVehicle *usecase.RegisterVehicle,
-	updateVehicle *usecase.UpdateVehicle,
-	listVehicles *usecase.ListVehicles,
-	searchVehicle *usecase.SearchVehicle,
+	createVehicle create.CreateVehicle,
+	updateVehicle update.UpdateVehicle,
+	listVehicles list.ListVehicles,
+	searchVehicle search.SearchVehicle,
 ) *VehicleHandler {
 	return &VehicleHandler{
-		registerVehicle: registerVehicle,
-		updateVehicle:   updateVehicle,
-		listVehicles:    listVehicles,
-		searchVehicle:   searchVehicle,
+		createVehicle: createVehicle,
+		updateVehicle: updateVehicle,
+		listVehicles:  listVehicles,
+		searchVehicle: searchVehicle,
 	}
 }
 

@@ -8,9 +8,9 @@ import (
 	"vehicle-registration-manager/pkg/tracer"
 )
 
-var dbConfig *configsDB.DatabaseConfig
+var dbConfig configsDB.DatabaseConfigs
 
-func RegisterHealthCheckRoutes(router *mux.Router, config *configsDB.DatabaseConfig) {
+func RegisterHealthCheckRoutes(router *mux.Router, config configsDB.DatabaseConfigs) {
 	dbConfig = config
 	router.HandleFunc("/health", HealthCheck).Methods(http.MethodGet)
 }

@@ -43,3 +43,10 @@ func getTracerID(ctx context.Context) string {
 	ctx = context.WithValue(ctx, tracerIdKey, tracerID)
 	return tracerID
 }
+
+// FakeTracer
+func NewFakeTracer() *Tracer {
+	id := "fake-tracer-id"
+	logg := logger.NewLoggerWithTrace(id)
+	return &Tracer{ctx: context.Background(), ID: id, Logger: logg}
+}

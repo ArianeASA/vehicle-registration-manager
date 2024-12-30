@@ -1,2 +1,7 @@
 .idea/*
 docs/*
+cmd/vehicle-registration-manager/configs/swagger.go
+
+**/mocks.go
+**/mocks_test.go
+**/mock*.go
