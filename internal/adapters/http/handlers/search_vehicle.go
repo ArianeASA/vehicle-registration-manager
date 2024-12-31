@@ -20,7 +20,7 @@ import (
 // @Failure		400	{object}	http_errors.ProblemDetails
 // @Param			id	path		string	true	"Vehicle ID"
 // @Router			/vehicles/{id} [get]
-func (h *VehicleHandler) HandleSearchVehicleByID(w http.ResponseWriter, r *http.Request) {
+func (h *vehicleHandler) HandleSearchVehicleByID(w http.ResponseWriter, r *http.Request) {
 	trc := tracer.NewTracer(r)
 	vars := mux.Vars(r)
 	id := vars["id"]

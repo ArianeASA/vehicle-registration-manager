@@ -5,7 +5,7 @@ import (
 )
 
 type VehicleHandler interface {
-	HandleRegisterVehicle(w http.ResponseWriter, r *http.Request)
+	HandleCreateVehicle(w http.ResponseWriter, r *http.Request)
 	HandleUpdateVehicle(w http.ResponseWriter, r *http.Request)
 	HandleListVehicles(w http.ResponseWriter, r *http.Request)
 	HandleSearchVehicleByID(w http.ResponseWriter, r *http.Request)

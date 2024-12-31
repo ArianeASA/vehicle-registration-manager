@@ -14,8 +14,8 @@ type VehicleRepository struct {
 	db *sql.DB
 }
 
-func NewVehicleRepository(config *configs.DatabaseConfig) (*VehicleRepository, error) {
-	return &VehicleRepository{db: config.GetDB()}, nil
+func NewVehicleRepository(config configs.DatabaseConfigs) *VehicleRepository {
+	return &VehicleRepository{db: config.GetDB()}
 }
 
 const (
@@ -25,17 +25,22 @@ const (
 	findByID = "SELECT id, brand, model, year, color, price FROM vehicles WHERE id=$1"
 )
 
+const (
+	msgFailedPrepare = "failed to prepare statement"
+	msgFailedClose   = "failed to close statement"
+)
+
 func (r *VehicleRepository) Save(tcr *tracer.Tracer, vehicle domains.Vehicle) error {
 
 	stmt, err := r.db.Prepare(insert)
 	if err != nil {
-		tcr.Logger.Error("failed to prepare statement", err)
+		tcr.Logger.Error(msgFailedPrepare, err)
 		return err
 	}
 	defer func(stmt *sql.Stmt) {
 		err := stmt.Close()
 		if err != nil {
-			tcr.Logger.Error("failed to close statement", err)
+			tcr.Logger.Error(msgFailedClose, err)
 		}
 	}(stmt)
 
@@ -50,13 +55,13 @@ func (r *VehicleRepository) Save(tcr *tracer.Tracer, vehicle domains.Vehicle) er
 func (r *VehicleRepository) Update(tcr *tracer.Tracer, vehicle domains.Vehicle) error {
 	stmt, err := r.db.Prepare(update)
 	if err != nil {
-		tcr.Logger.Error("failed to prepare statement", err)
+		tcr.Logger.Error(msgFailedPrepare, err)
 		return err
 	}
 	defer func(stmt *sql.Stmt) {
 		err := stmt.Close()
 		if err != nil {
-			tcr.Logger.Error("failed to close statement", err)
+			tcr.Logger.Error(msgFailedClose, err)
 		}
 	}(stmt)
 
@@ -86,7 +91,7 @@ func (r *VehicleRepository) FindAll(tcr *tracer.Tracer) ([]domains.Vehicle, erro
 		var vehicle entities.Vehicle
 		if err := rows.Scan(&vehicle.ID, &vehicle.Brand, &vehicle.Model, &vehicle.Year, &vehicle.Color, &vehicle.Price); err != nil {
 			tcr.Logger.Error("failed to scan", err)
-			return nil, err
+			return nil, errors.New("failed to scan")
 		}
 		vehicles = append(vehicles, mappers.EntityToDomain(vehicle))
 	}
@@ -96,13 +101,13 @@ func (r *VehicleRepository) FindAll(tcr *tracer.Tracer) ([]domains.Vehicle, erro
 func (r *VehicleRepository) FindByID(tcr *tracer.Tracer, id string) (domains.Vehicle, error) {
 	stmt, err := r.db.Prepare(findByID)
 	if err != nil {
-		tcr.Logger.Error("failed to prepare statement", err)
+		tcr.Logger.Error(msgFailedPrepare, err)
 		return domains.Vehicle{}, err
 	}
 	defer func(stmt *sql.Stmt) {
 		err := stmt.Close()
 		if err != nil {
-			tcr.Logger.Error("failed to close statement", err)
+			tcr.Logger.Error(msgFailedClose, err)
 		}
 	}(stmt)
 

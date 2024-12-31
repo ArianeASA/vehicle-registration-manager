@@ -25,7 +25,7 @@ import (
 // @Param			id		path		string				false	"Vehicle ID"
 // @Param			vehicle	body		requests.Vehicle	true	"Vehicle"	example({"brand":"string","model":"string","year":2022,"color":"string","price":474432})
 // @Router			/vehicles/{id} [put]
-func (h *VehicleHandler) HandleUpdateVehicle(w http.ResponseWriter, r *http.Request) {
+func (h *vehicleHandler) HandleUpdateVehicle(w http.ResponseWriter, r *http.Request) {
 	trc := tracer.NewTracer(r)
 	var vehicle requests.Vehicle
 	if err := json.NewDecoder(r.Body).Decode(&vehicle); err != nil {

@@ -1,2 +1,15 @@
 .idea/*
 docs/*
+cmd/vehicle-registration-manager/configs/swagger.go
+
+**/mocks.go
+**/mocks_test.go
+**/mock*.go
+
+internal/app/usecase/list/mocks.go
+internal/app/usecase/create/mocks.go
+internal/app/usecase/update/mocks.go
+internal/app/usecase/search/mocks.go
+internal/adapters/repository/configs/mock.go
+internal/core/ports/out/mocks.go
+internal/core/ports/in/mocks.go
