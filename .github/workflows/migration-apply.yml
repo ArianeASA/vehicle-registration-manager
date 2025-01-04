@@ -8,12 +8,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install Go
-        uses: golangci/golangci-lint-action@v1
+        uses: actions/setup-go@v4
         with:
-          version: latest
+          go-version: '1.23'
+
+      - name: Configure build environment
+        run: |
+          sudo apt-get update && sudo apt-get install -y wget curl unzip
+          sudo apt-get clean
+          sudo rm -rf /var/lib/apt/lists/*
       - name: Install Goose
         run: |
-          go install github.com/pressly/goose/cmd/goose@latest
+          go get github.com/pressly/goose/cmd/goose@latest
           which goose
       - name: Verify Goose installation
         run: |
