@@ -69,7 +69,7 @@ data "aws_availability_zones" "available" {
 # }
 
 resource "aws_subnet" "public" {
-  count             = 1
+  count             = 2
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.${count.index + 1}.0/24"
   map_public_ip_on_launch = true
@@ -104,6 +104,7 @@ resource "aws_security_group" "rds_sg" {
 resource "aws_db_subnet_group" "rds_subnet_group" {
   name       = "rds_subnet_group"
   subnet_ids = aws_subnet.public[*].id
+
   tags = {
     Name = "RDS Subnet Group"
   }
