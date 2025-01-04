@@ -45,23 +45,26 @@ jobs:
       - name: List migration files
         run: |
           ls -la $GOOSE_MIGRATIONS_DIR
+      # Verificar se migrações são necessárias
       - name: Check if migrations are needed
         run: |
-          if ! goose -s status | grep -q "Pending"; then
+          if ! goose -dir $GOOSE_MIGRATIONS_DIR postgres "$GOOSE_DBSTRING" status | grep -q "Pending"; then
             echo "No pending migrations found."
             exit 0
           fi
+
+      # Aplicar migrações
       - name: Apply migrations
         run: |
-          goose -s up
-          goose -s status
+          goose -dir $GOOSE_MIGRATIONS_DIR postgres "$GOOSE_DBSTRING" up
+          goose -dir $GOOSE_MIGRATIONS_DIR postgres "$GOOSE_DBSTRING" status
 
-  rollback:
-    needs: migrate
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Rollback migrations
-        run: |
-          goose -s down
-          goose -s status
+#  rollback:
+#    needs: migrate
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Rollback migrations
+#        run: |
+#          goose -s down
+#          goose -s status
