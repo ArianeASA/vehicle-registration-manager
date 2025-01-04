@@ -33,16 +33,24 @@ jobs:
           export GOOSE_DRIVER=postgres
           export GOOSE_DBSTRING="postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}"
           export PGPASSWORD=${{ secrets.DB_PASSWORD }}
+
+      # Configurar variáveis de ambiente
+      - name: Set up environment variables
+        run: |
+          echo "GOOSE_MIGRATIONS_DIR=./migrations" >> $GITHUB_ENV
+          echo "GOOSE_DRIVER=postgres" >> $GITHUB_ENV
+          echo "GOOSE_DBSTRING=postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}" >> $GITHUB_ENV
+          echo "PGPASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
       - name: Check if migrations are needed
         run: |
-          if ! goose postgres -s "user=${{ secrets.DB_USERNAME }} dbname=${{ secrets.DB_NAME }} sslmode=disable" status | grep -q "Pending"; then
+          if ! goose postgres -s status | grep -q "Pending"; then
             echo "No pending migrations found."
             exit 0
           fi
       - name: Apply migrations
         run: |
-          goose postgres -s "user=${{ secrets.DB_USERNAME }} dbname=${{ secrets.DB_NAME }} sslmode=disable" up
-          goose postgres -s "user=${{ secrets.DB_USERNAME }} dbname=${{ secrets.DB_NAME }} sslmode=disable" status
+          goose postgres -s up
+          goose postgres -s status
 
   rollback:
     needs: migrate
