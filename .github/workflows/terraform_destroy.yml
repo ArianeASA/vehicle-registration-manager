@@ -33,8 +33,6 @@ jobs:
             -backend-config="key=states-${{ inputs.app_name }}-ecs" \
             -backend-config="bucket=terraforms-bucket" \
             -backend-config="region=${{ secrets.AWS_REGION }}" \
-            -var "cognito_name=${{ secrets.CG_NAME }}" \
-            -var "cognito_id=${{ secrets.CG_ID }}" \
             -var "db_username=${{ secrets.DB_USERNAME }}" \
             -var "db_password=${{ secrets.DB_PASSWORD }}" \
             -var "db_name=${{ secrets.DB_NAME }}" \
@@ -50,8 +48,6 @@ jobs:
             -var 'access_key=${{ secrets.AWS_ACCESS_KEY_ID }}' \
             -var 'secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}' \
             -var 'account_id=${{ secrets.ACCOUNT_ID }}' \
-            -var "cognito_name=${{ secrets.CG_NAME }}" \
-            -var "cognito_id=${{ secrets.CG_ID }}" \
             -var "db_username=${{ secrets.DB_USERNAME }}" \
             -var "db_password=${{ secrets.DB_PASSWORD }}" \
             -var "db_name=${{ secrets.DB_NAME }}" \
