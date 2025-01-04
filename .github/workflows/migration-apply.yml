@@ -32,7 +32,7 @@ jobs:
         run: |
           export GOOSE_MIGRATIONS_DIR=./migrations
           export GOOSE_DRIVER=postgres
-          export GOOSE_DBSTRING=postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}
+          export GOOSE_DBSTRING=postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}?sslmode=disable&search_path=${{ secrets.DB_SCHEMA }}
           export PGPASSWORD=${{ secrets.DB_PASSWORD }}
 
       # Configurar variáveis de ambiente
@@ -40,7 +40,7 @@ jobs:
         run: |
           echo "GOOSE_MIGRATIONS_DIR=./migrations" >> $GITHUB_ENV
           echo "GOOSE_DRIVER=postgres" >> $GITHUB_ENV
-          echo "GOOSE_DBSTRING=postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}" >> $GITHUB_ENV
+          echo "GOOSE_DBSTRING=postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}?sslmode=disable&search_path=${{ secrets.DB_SCHEMA }}" >> $GITHUB_ENV
           echo "PGPASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
       - name: List migration files
         run: |
@@ -59,12 +59,12 @@ jobs:
           goose -dir $GOOSE_MIGRATIONS_DIR up
           goose -dir $GOOSE_MIGRATIONS_DIR status
 
-#  rollback:
-#    needs: migrate
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Rollback migrations
-#        run: |
-#          goose -s down
-#          goose -s status
+  rollback:
+    needs: migrate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Rollback migrations
+        run: |
+          goose -dir $GOOSE_MIGRATIONS_DIR -s down
+          goose -dir $GOOSE_MIGRATIONS_DIR -s status
