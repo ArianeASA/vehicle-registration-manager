@@ -43,14 +43,14 @@ jobs:
           echo "PGPASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
       - name: Check if migrations are needed
         run: |
-          if ! goose postgres -s status | grep -q "Pending"; then
+          if ! goose -s status | grep -q "Pending"; then
             echo "No pending migrations found."
             exit 0
           fi
       - name: Apply migrations
         run: |
-          goose postgres -s up
-          goose postgres -s status
+          goose -s up
+          goose -s status
 
   rollback:
     needs: migrate
