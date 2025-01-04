@@ -10,6 +10,14 @@ jobs:
       - name: Install Goose
         run: |
           curl -sf https://raw.githubusercontent.com/pressly/goose/main/install.sh | sh
+          which goose
+      - name: Verify Goose installation
+        run: |
+          goose --version
+          if [ $? -ne 0 ]; then
+            echo "Goose is not installed correctly. Exiting."
+            exit 1
+          fi
       - name: Set up environment variables
         run: |
           export GOOSE_MIGRATIONS_DIR="./migrations"
@@ -23,15 +31,15 @@ jobs:
           fi
       - name: Apply migrations
         run: |
-          goose -s up
-          goose -s status
+          /usr/local/bin/goose -s up
+          /usr/local/bin/goose -s status
 
   rollback:
     needs: migrate
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v2
       - name: Rollback migrations
         run: |
-          goose -s down
-          goose -s status
+          /usr/local/bin/goose -s down
+          /usr/local/bin/goose -s status
