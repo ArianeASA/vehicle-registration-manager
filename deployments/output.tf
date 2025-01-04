@@ -10,11 +10,6 @@ output "rds_username" {
   sensitive = false
 }
 
-output "rds_password" {
-  value = aws_db_instance.postgres_rds.password
-    description = "RDS Password"
-  sensitive = false
-}
 
 output "rds_db_name" {
   value = var.db_name
