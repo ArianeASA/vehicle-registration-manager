@@ -19,8 +19,7 @@ jobs:
           sudo rm -rf /var/lib/apt/lists/*
       - name: Install Goose
         run: |
-          go get github.com/pressly/goose/cmd/goose@latest
-          which goose
+          go install github.com/pressly/goose/v3/cmd/goose@latest
       - name: Verify Goose installation
         run: |
           goose --version
