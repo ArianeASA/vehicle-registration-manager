@@ -6,6 +6,7 @@ resource "aws_db_instance" "postgres_rds" {
   identifier           = var.db_name
   username             = var.db_username
   password             = var.db_password
+  db_name = var.db_name
   skip_final_snapshot = true
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
   db_subnet_group_name    = aws_db_subnet_group.rds_subnet_group.name
@@ -14,6 +15,15 @@ resource "aws_db_instance" "postgres_rds" {
   storage_encrypted = true
 }
 
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.main.id
+}
+
+resource "aws_route" "default_route" {
+  route_table_id         = aws_vpc.main.main_route_table_id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.igw.id
+}
 
 resource "aws_vpc_endpoint" "rds_endpoint" {
   vpc_id            = aws_vpc.main.id
@@ -25,7 +35,7 @@ resource "aws_vpc_endpoint" "rds_endpoint" {
   security_group_ids = [aws_security_group.rds_sg.id,]
   depends_on = [ aws_security_group.rds_sg]
 
-  subnet_ids = aws_subnet.private[*].id
+  subnet_ids = aws_subnet.public[*].id
 
 
   tags = {
@@ -48,17 +58,28 @@ data "aws_availability_zones" "available" {
 }
 
 
-resource "aws_subnet" "private" {
+# resource "aws_subnet" "private" {
+#   count             = 2
+#   vpc_id            = aws_vpc.main.id
+#   cidr_block        = "10.0.${count.index + 1}.0/24"
+#   availability_zone = data.aws_availability_zones.available.names[count.index]
+#
+#   tags = {
+#     Name = "Private Subnet ${count.index + 1}"
+#   }
+# }
+
+resource "aws_subnet" "public" {
   count             = 2
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.${count.index + 1}.0/24"
+  map_public_ip_on_launch = true
   availability_zone = data.aws_availability_zones.available.names[count.index]
 
   tags = {
-    Name = "Private Subnet ${count.index + 1}"
+    Name = "Public Subnet ${count.index + 1}"
   }
 }
-
 
 resource "aws_security_group" "rds_sg" {
   name        = "rds-sg"
@@ -70,8 +91,7 @@ resource "aws_security_group" "rds_sg" {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    # cidr_blocks = [aws_vpc.app-vpc.cidr_block]
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [aws_vpc.main.cidr_block]
   }
 
   egress {
@@ -84,7 +104,8 @@ resource "aws_security_group" "rds_sg" {
 
 resource "aws_db_subnet_group" "rds_subnet_group" {
   name       = "rds_subnet_group"
-  subnet_ids = aws_subnet.private[*].id
+  subnet_ids = aws_subnet.public[*].id
+
   tags = {
     Name = "RDS Subnet Group"
   }
