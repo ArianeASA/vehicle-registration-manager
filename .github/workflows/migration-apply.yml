@@ -31,7 +31,7 @@ jobs:
         run: |
           export GOOSE_MIGRATIONS_DIR=./migrations
           export GOOSE_DRIVER=postgres
-          export GOOSE_DBSTRING=postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:{{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}
+          export GOOSE_DBSTRING=postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}
           export PGPASSWORD=${{ secrets.DB_PASSWORD }}
       - name: Check if migrations are needed
         run: |
