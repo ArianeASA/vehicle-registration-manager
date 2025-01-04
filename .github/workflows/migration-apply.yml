@@ -1,4 +1,5 @@
 name: Migration apply
+
 on:
   workflow_dispatch:
 
@@ -7,19 +8,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      # Instalar Go
       - name: Install Go
         uses: actions/setup-go@v4
         with:
           go-version: '1.23'
 
-      - name: Configure build environment
-        run: |
-          sudo apt-get update && sudo apt-get install -y wget curl unzip
-          sudo apt-get clean
-          sudo rm -rf /var/lib/apt/lists/*
+      # Instalar o Goose
       - name: Install Goose
         run: |
           go install github.com/pressly/goose/v3/cmd/goose@latest
+          echo "$HOME/go/bin" >> $GITHUB_PATH
+
+      # Verificar a instalação do Goose
       - name: Verify Goose installation
         run: |
           goose --version
@@ -27,29 +29,43 @@ jobs:
             echo "Goose is not installed correctly. Exiting."
             exit 1
           fi
+
+      # Configurar variáveis de ambiente
       - name: Set up environment variables
         run: |
-          export GOOSE_MIGRATIONS_DIR=./migrations
-          export GOOSE_DRIVER=postgres
-          export GOOSE_DBSTRING="postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}"
-          export PGPASSWORD=${{ secrets.DB_PASSWORD }}
+          echo "GOOSE_MIGRATIONS_DIR=./migrations" >> $GITHUB_ENV
+          echo "GOOSE_DRIVER=postgres" >> $GITHUB_ENV
+          echo "GOOSE_DBSTRING=postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}" >> $GITHUB_ENV
+          echo "PGPASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
+
+      # Verificar se migrações são necessárias
       - name: Check if migrations are needed
         run: |
-          if ! goose postgres -s "user=${{ secrets.DB_USERNAME }} dbname=${{ secrets.DB_NAME }} sslmode=disable" status | grep -q "Pending"; then
+          if ! goose -dir $GOOSE_MIGRATIONS_DIR postgres "$GOOSE_DBSTRING" status | grep -q "Pending"; then
             echo "No pending migrations found."
             exit 0
           fi
+
+      # Aplicar migrações
       - name: Apply migrations
         run: |
-          goose postgres -s "user=${{ secrets.DB_USERNAME }} dbname=${{ secrets.DB_NAME }} sslmode=disable" up
-          goose postgres -s "user=${{ secrets.DB_USERNAME }} dbname=${{ secrets.DB_NAME }} sslmode=disable" status
+          goose -dir $GOOSE_MIGRATIONS_DIR postgres "$GOOSE_DBSTRING" up
+          goose -dir $GOOSE_MIGRATIONS_DIR postgres "$GOOSE_DBSTRING" status
 
   rollback:
     needs: migrate
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+
+      # Instalar o Goose
+      - name: Install Goose
+        run: |
+          go install github.com/pressly/goose/v3/cmd/goose@latest
+          echo "$HOME/go/bin" >> $GITHUB_PATH
+
+      # Aplicar migrações reversas
       - name: Rollback migrations
         run: |
-          goose -s down
-          goose -s status
+          goose -dir $GOOSE_MIGRATIONS_DIR postgres "$GOOSE_DBSTRING" down
+          goose -dir $GOOSE_MIGRATIONS_DIR postgres "$GOOSE_DBSTRING" status
