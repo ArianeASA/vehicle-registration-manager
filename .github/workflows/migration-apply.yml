@@ -32,7 +32,7 @@ jobs:
         run: |
           export GOOSE_MIGRATIONS_DIR=./migrations
           export GOOSE_DRIVER=postgres
-          export GOOSE_DBSTRING="postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}"
+          export GOOSE_DBSTRING=postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}
           export PGPASSWORD=${{ secrets.DB_PASSWORD }}
 
       # Configurar variáveis de ambiente
@@ -48,7 +48,7 @@ jobs:
       # Verificar se migrações são necessárias
       - name: Check if migrations are needed
         run: |
-          if ! goose -dir $GOOSE_MIGRATIONS_DIR postgres "$GOOSE_DBSTRING" status | grep -q "Pending"; then
+          if ! goose -dir $GOOSE_MIGRATIONS_DIR  status | grep -q "Pending"; then
             echo "No pending migrations found."
             exit 0
           fi
@@ -56,8 +56,8 @@ jobs:
       # Aplicar migrações
       - name: Apply migrations
         run: |
-          goose -dir $GOOSE_MIGRATIONS_DIR postgres "$GOOSE_DBSTRING" up
-          goose -dir $GOOSE_MIGRATIONS_DIR postgres "$GOOSE_DBSTRING" status
+          goose -dir $GOOSE_MIGRATIONS_DIR up
+          goose -dir $GOOSE_MIGRATIONS_DIR status
 
 #  rollback:
 #    needs: migrate
