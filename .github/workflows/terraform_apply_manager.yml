@@ -1,0 +1,10 @@
+name: Terraform APPLY Vehicle Registration Manager APP
+on:
+  workflow_dispatch:
+
+jobs:
+  terraform-apply-vehicle-registration-app:
+    uses: ./.github/workflows/terraform-apply.yml
+    with:
+      app_name: 'vehicle-manager-db'
+    secrets: inherit

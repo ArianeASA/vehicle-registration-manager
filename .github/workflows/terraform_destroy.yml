@@ -1,0 +1,62 @@
+name: reuse destroy
+
+on:
+  workflow_call:
+    inputs:
+      app_name:
+        type: string
+        required: true
+
+jobs:
+
+  terraform-destroy:
+    name: Terraform Destroy
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    - name: Terraform Init
+      run: |
+        terraform  init \
+            -backend-config="key=states-${{ inputs.app_name }}-ecs" \
+            -backend-config="bucket=terraforms-bucket" \
+            -backend-config="region=${{ secrets.AWS_REGION }}" \
+            -var "name_app=${{ inputs.app_name }}" \
+            -var "cognito_name=${{ secrets.CG_NAME }}" \
+            -var "cognito_id=${{ secrets.CG_ID }}" \
+            -var "db_username=${{ secrets.DB_USERNAME }}" \
+            -var "db_password=${{ secrets.DB_PASSWORD }}" \
+            -var "db_name=${{ secrets.DB_NAME }}" \
+            -var "db_driver=${{ secrets.DB_DRIVER }}" \
+            -var "db_schema=${{ secrets.DB_SCHEMA }}" \
+            -var "scope=${{ secrets.DB_SCOPE }}"
+
+    - name: Terraform Destroy
+      run: |
+        terraform  destroy \
+            -auto-approve \
+            -var 'aws_region=${{ secrets.AWS_REGION }}' \
+            -var 'access_key=${{ secrets.AWS_ACCESS_KEY_ID }}' \
+            -var 'secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}' \
+            -var 'account_id=${{ secrets.ACCOUNT_ID }}' \
+            -var "name_app=${{ inputs.app_name }}" \
+            -var "cognito_name=${{ secrets.CG_NAME }}" \
+            -var "cognito_id=${{ secrets.CG_ID }}" \
+            -var "db_username=${{ secrets.DB_USERNAME }}" \
+            -var "db_password=${{ secrets.DB_PASSWORD }}" \
+            -var "db_name=${{ secrets.DB_NAME }}" \
+            -var "db_driver=${{ secrets.DB_DRIVER }}" \
+            -var "db_schema=${{ secrets.DB_SCHEMA }}" \
+            -var "scope=${{ secrets.DB_SCOPE }}"
