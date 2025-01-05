@@ -161,4 +161,4 @@ jobs:
 #          cat "AWS_SG_ID=$AWS_SG_ID" >> $GITHUB_ENV
 
       - name: Use Terraform Output
-        run: echo "The AWS Security Group ID is ${{ env.AWS_SG_ID }}"
+        run: echo "The AWS Security Group ID is $AWS_SG_ID"
