@@ -1,12 +1,13 @@
 [![SonarQube Pipeline](https://github.com/ArianeASA/vehicle-registration-manager/actions/workflows/sonar.yml/badge.svg)](https://github.com/ArianeASA/vehicle-registration-manager/actions/workflows/sonar.yml)
 [![Pre-deployment Pipeline](https://github.com/ArianeASA/vehicle-registration-manager/actions/workflows/build.yml/badge.svg)](https://github.com/ArianeASA/vehicle-registration-manager/actions/workflows/build.yml)
+[![Migration apply](https://github.com/ArianeASA/vehicle-registration-manager/actions/workflows/migration-apply.yml/badge.svg?branch=develop)](https://github.com/ArianeASA/vehicle-registration-manager/actions/workflows/migration-apply.yml)
 # Vehicle Registration Manager
 
 This project is a sample server for managing vehicles, built with Go.
 
 ## Description
 
-The Vehicle API allows you to manage vehicle information, including listing vehicles, adding new vehicles, updating existing vehicles, and deleting vehicles.
+The Vehicle API allows you to manage vehicle information, adding new vehicles, updating existing vehicles, and deleting vehicles.
 
 ## Getting Started
 
@@ -14,13 +15,14 @@ The Vehicle API allows you to manage vehicle information, including listing vehi
 
 - Go 1.23 or higher
 - Make sure to have `go.mod` and `go.sum` files in your project directory
+- [goose](https://github.com/pressly/goose) CLI tool for database migrations 
 
 ### Installing
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/yourusername/vehicle-api.git
-    cd vehicle-api
+    git clone https://github.com/ArianeASA/vehicle-registration-manager.git
+    cd vehicle-registration-manager
     ```
 
 2. Install dependencies:
@@ -28,23 +30,72 @@ The Vehicle API allows you to manage vehicle information, including listing vehi
     go mod tidy
     ```
 
-### Running the Application
+### Running the Application with Makefile
 
-To run the application, use the following command:
-```sh
-go run main.go
-```
+1. **Start the database with Docker Compose**:
+    ```sh
+    make docker-up-database
+    ```
+   The database is started in a Docker container using the `docker-compose.yml` file.
+   Use database type postgres to run the database in a Docker container.
+   
+   Configurations:
+   - POSTGRES_USER=yourusername
+     - POSTGRES_PASSWORD=yourpassword
+     - POSTGRES_DB=dealership
+     - Schema: prod
+   
+   The database will start on http://localhost:5432.
 
 
-The server will start on http://localhost:8080.  
+2. **Check database migrations status**:
+    ```sh
+    make goose-status
+    ```
 
-### API Documentation
-The API documentation is available in the docs/swagger.json file. You can use Swagger UI to visualize and interact with the API.  
+3. **Run database migrations**:
+    ```sh
+    make goose-up
+    ```
+   All database migrations are stored in the `migrations` directory.
 
-```shell
-swag init -g cmd/vehicle-registration-manager/main.go
-```
-link: http://localhost:8080/swagger/index.html
 
+4. **Generate API documentation**:
+    ```sh
+    make doc
+    ```
+   The API documentation is available in the docs/swagger.json file. You can use Swagger UI to visualize and interact with the API.  
+   The Swagger UI is available at http://localhost:8080/swagger/index.html.
+
+
+5. **Run the application**:
+    ```sh
+    make run
+    ```
+   The server will start on http://localhost:8080.
+
+
+6. **Rollback database migrations**:
+    ```sh
+    make goose-down
+    ```
+    
+7. **Stop the application with Docker Compose**:
+    ```sh
+    make docker-down-all
+    ```
+   
+
+8. **Clean up generated files**:
+    ```sh
+    make clean
+    ```
+   
+
+9. **Show help message**:
+    ```sh
+    make help
+    ```
+   
 ### License
 This project is licensed under the Apache 2.0 License - see the LICENSE file for details.
