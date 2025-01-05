@@ -6,6 +6,9 @@ on:
       app_name:
         type: string
         required: true
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 jobs:
   terraform-apply:
@@ -113,66 +116,65 @@ jobs:
 #            -d "{\"encrypted_value\":\"$MY_SECRET\"}" \
 #            https://api.github.com/repos/ArianeASA/vehicle-registration-manager/actions/secrets/AWS_SECURITY_GROUP_ID
 
-  terraform-output:
+#  terraform-output:
+#    needs: terraform-apply
+#    name: Terraform-output
+#    runs-on: ubuntu-latest
+#    environment: production
+#
+#    defaults:
+#      run:
+#        shell: bash
+#
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#
+#      - name: Configure AWS Credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: ${{ secrets.AWS_REGION }}
+#
+#      - name: Setup Terraform
+#        uses: hashicorp/setup-terraform@v1
+#        with:
+#          terraform_wrapper: false
+#
+#      - name: Terraform Init
+#        run: |
+#          terraform -chdir=deployments init \
+#              -backend-config="key=states-${{inputs.app_name}}-ecs.tfstate" \
+#              -backend-config="bucket=terraforms-bucket" \
+#              -backend-config="region=${{ secrets.AWS_REGION }}" \
+#              -var "db_username=${{ secrets.DB_USERNAME }}" \
+#              -var "db_password=${{ secrets.DB_PASSWORD }}" \
+#              -var "db_name=${{ secrets.DB_NAME }}" \
+#              -var "db_driver=${{ secrets.DB_DRIVER }}" \
+#              -var "db_schema=${{ secrets.DB_SCHEMA }}" \
+#              -var "scope=${{ secrets.DB_SCOPE }}"
+
+
+  get_remote_state:
     needs: terraform-apply
     name: Terraform-output
-    runs-on: ubuntu-latest
     environment: production
-
-    defaults:
-      run:
-        shell: bash
-
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Get remote state
+        uses: dflook/terraform-remote-state@v1
+        id: remote-state
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          backend_type: s3
+          backend_config: |
+            bucket=terraforms-bucket
+            key="states-${{inputs.app_name}}-ecs.tfstate"
+            region=${{ secrets.AWS_REGION }}
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_wrapper: false
-
-      - name: Terraform Init
+      - name: Use Terraform output
         run: |
-          terraform -chdir=deployments init \
-              -backend-config="key=states-${{inputs.app_name}}-ecs.tfstate" \
-              -backend-config="bucket=terraforms-bucket" \
-              -backend-config="region=${{ secrets.AWS_REGION }}" \
-              -var "db_username=${{ secrets.DB_USERNAME }}" \
-              -var "db_password=${{ secrets.DB_PASSWORD }}" \
-              -var "db_name=${{ secrets.DB_NAME }}" \
-              -var "db_driver=${{ secrets.DB_DRIVER }}" \
-              -var "db_schema=${{ secrets.DB_SCHEMA }}" \
-              -var "scope=${{ secrets.DB_SCOPE }}"
-
-#      - name: Terraform Refresh
-#        run: terraform -chdir=deployments refresh \
-#            -var 'aws_region=${{ secrets.AWS_REGION }}' \
-#            -var 'account_id=${{ secrets.ACCOUNT_ID }}' \
-#            -var 'access_key=${{ secrets.AWS_ACCESS_KEY_ID }}' \
-#            -var 'secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}'
-
-
-
-      - name: Terraform Output
-        run: |
-          terraform output -json
-          terraform output -json > output.json
-
-#      - name: Capture Terraform Output
-#        id: capture_output
-#        run: |
-#          AWS_SG_ID=$(terraform output -raw rds_security_group_id)
-#          echo "AWS_SG_ID<<EOF" >> $GITHUB_ENV
-#          echo "$AWS_SG_ID" >> $GITHUB_ENV
-#          echo "EOF" >> $GITHUB_ENV
-#
-#      - name: Use Terraform Output
-#        run: echo "The AWS Security Group ID is $AWS_SG_ID"
+          echo "Service URL: ${{ steps.remote-state.outputs.rds_security_group_id }}"
