@@ -116,44 +116,6 @@ jobs:
 #            -d "{\"encrypted_value\":\"$MY_SECRET\"}" \
 #            https://api.github.com/repos/ArianeASA/vehicle-registration-manager/actions/secrets/AWS_SECURITY_GROUP_ID
 
-#  terraform-output:
-#    needs: terraform-apply
-#    name: Terraform-output
-#    runs-on: ubuntu-latest
-#    environment: production
-#
-#    defaults:
-#      run:
-#        shell: bash
-#
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v3
-#
-#      - name: Configure AWS Credentials
-#        uses: aws-actions/configure-aws-credentials@v1
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#          aws-region: ${{ secrets.AWS_REGION }}
-#
-#      - name: Setup Terraform
-#        uses: hashicorp/setup-terraform@v1
-#        with:
-#          terraform_wrapper: false
-#
-#      - name: Terraform Init
-#        run: |
-#          terraform -chdir=deployments init \
-#              -backend-config="key=states-${{inputs.app_name}}-ecs.tfstate" \
-#              -backend-config="bucket=terraforms-bucket" \
-#              -backend-config="region=${{ secrets.AWS_REGION }}" \
-#              -var "db_username=${{ secrets.DB_USERNAME }}" \
-#              -var "db_password=${{ secrets.DB_PASSWORD }}" \
-#              -var "db_name=${{ secrets.DB_NAME }}" \
-#              -var "db_driver=${{ secrets.DB_DRIVER }}" \
-#              -var "db_schema=${{ secrets.DB_SCHEMA }}" \
-#              -var "scope=${{ secrets.DB_SCOPE }}"
 
   get_outputs:
     needs: terraform-apply
@@ -177,4 +139,8 @@ jobs:
 
       - name: Extract outputs from state file
         run: |
-          python .github/workflows/extract_outputs.py terraform.tfstate
+          python .github/workflows/extract_outputs.py terraform.tfstate rds_security_group_id
+
+      - name: Use the environment variable
+        run: |
+          echo "The desired output is ${{ env.RDS_SECURITY_GROUP_ID }}"
