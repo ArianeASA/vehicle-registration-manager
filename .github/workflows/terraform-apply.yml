@@ -177,4 +177,4 @@ jobs:
 
       - name: Extract outputs from state file
         run: |
-          python extract_outputs.py terraform.tfstate
+          python .github/workflows/extract_outputs.py terraform.tfstate
