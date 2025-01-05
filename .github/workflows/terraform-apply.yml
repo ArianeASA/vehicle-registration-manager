@@ -150,6 +150,9 @@ jobs:
               -var "db_schema=${{ secrets.DB_SCHEMA }}" \
               -var "scope=${{ secrets.DB_SCOPE }}"
 
+      - name: Terraform Refresh
+        run: terraform refresh
+
       - name: Capture Terraform Output
         id: capture_output
         run: |
