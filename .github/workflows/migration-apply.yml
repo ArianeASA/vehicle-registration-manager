@@ -16,9 +16,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Use the environment variable
-        run: |
-          echo "The security group is ${{ vars.AWS_SECURITY_GROUP_ID }}"
+#      - name: Use the environment variable
+#        run: |
+#          echo "The security group is ${{ vars.AWS_SECURITY_GROUP_ID }}"
 
       - name: Add IP to Security Group
         uses: passeidireto/aws-add-ip-to-security-group-action@v1.0.0
@@ -61,9 +61,11 @@ jobs:
           echo "GOOSE_DRIVER=postgres" >> $GITHUB_ENV
           echo "GOOSE_DBSTRING=postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}?sslmode=disable&search_path=${{ secrets.DB_SCHEMA }}" >> $GITHUB_ENV
           echo "PGPASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
+
       - name: List migration files
         run: |
           ls -la $GOOSE_MIGRATIONS_DIR
+
       # Verificar se migrações são necessárias
       - name: Check if migrations are needed
         run: |
@@ -74,15 +76,32 @@ jobs:
 
       # Aplicar migrações
       - name: Apply migrations
+        id: apply-migrations
         run: |
           goose -dir $GOOSE_MIGRATIONS_DIR up
           goose -dir $GOOSE_MIGRATIONS_DIR status
 
   rollback:
     needs: migrate
+    if: ${{ steps.apply-migrations.conclusion == 'failure' }}
+    environment: production
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Add IP to Security Group
+        uses: passeidireto/aws-add-ip-to-security-group-action@v1.0.0
+        with:
+          aws_security_group_ids: ${{ vars.AWS_SECURITY_GROUP_ID }}
+          port_range: '${{ secrets.DB_PORT }}-${{ secrets.DB_PORT }}'
+
       - name: Rollback migrations
         run: |
           goose -dir $GOOSE_MIGRATIONS_DIR -s down
