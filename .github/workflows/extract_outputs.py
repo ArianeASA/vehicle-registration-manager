@@ -19,6 +19,7 @@ for key, value in outputs.items():
 
 # Extrair o valor do output desejado
 desired_output = outputs.get('your_output_name', {}).get('value', '')
+print(f"Output desejado: {desired_output}")
 
 # Escrever o valor no arquivo GITHUB_ENV
 env_file = os.getenv('GITHUB_ENV')
