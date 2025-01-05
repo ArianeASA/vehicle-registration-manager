@@ -38,7 +38,7 @@ jobs:
       - name: Terraform Init
         run: |
           terraform -chdir=deployments init \
-              -backend-config="key=states-${{inputs.app_name}}-ecs" \
+              -backend-config="key=states-${{inputs.app_name}}-ecs.tfstate" \
               -backend-config="bucket=terraforms-bucket" \
               -backend-config="region=${{ secrets.AWS_REGION }}" \
               -var "db_username=${{ secrets.DB_USERNAME }}" \
@@ -87,11 +87,7 @@ jobs:
               -var "db_schema=${{ secrets.DB_SCHEMA }}" \
               -var "scope=${{ secrets.DB_SCOPE }}"
 
-      - name: Capture Terraform Outputs
-        run: |
-          ls -la
-          cd deployments
-          ls -la
+
 #          AWS_SG_ID=$(terraform output -raw rds_security_group_id)
 #          echo "AWS_SG_ID<<EOF" >> $GITHUB_ENV
 #          echo "$AWS_SG_ID" >> $GITHUB_ENV
@@ -146,7 +142,7 @@ jobs:
       - name: Terraform Init
         run: |
           terraform -chdir=deployments init \
-              -backend-config="key=states-${{inputs.app_name}}-ecs" \
+              -backend-config="key=states-${{inputs.app_name}}-ecs.tfstate" \
               -backend-config="bucket=terraforms-bucket" \
               -backend-config="region=${{ secrets.AWS_REGION }}" \
               -var "db_username=${{ secrets.DB_USERNAME }}" \
@@ -163,20 +159,13 @@ jobs:
 #            -var 'access_key=${{ secrets.AWS_ACCESS_KEY_ID }}' \
 #            -var 'secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}'
 
-#      - name: Capture Terraform Output
-#        id: capture_output
-#        run: |
-#          terraform -chdir=deployments output \
-#              -backend-config="key=states-${{inputs.app_name}}-ecs" \
-#              -backend-config="bucket=terraforms-bucket" \
-#              -backend-config="region=${{ secrets.AWS_REGION }}" \
-#              -raw rds_security_group_id
-#          AWS_SG_ID=$(terraform output -raw rds_security_group_id)
-#          echo "AWS_SG_ID<<EOF" >> $GITHUB_ENV
-#          echo "$AWS_SG_ID" >> $GITHUB_ENV
-#          echo "EOF" >> $GITHUB_ENV
-#          AWS_SG_ID=$(terraform output -raw rds_security_group_id)
-#          cat "AWS_SG_ID=$AWS_SG_ID" >> $GITHUB_ENV
+      - name: Capture Terraform Output
+        id: capture_output
+        run: |
+          AWS_SG_ID=$(terraform output -raw rds_security_group_id)
+          echo "AWS_SG_ID<<EOF" >> $GITHUB_ENV
+          echo "$AWS_SG_ID" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
-#      - name: Use Terraform Output
-#        run: echo "The AWS Security Group ID is $AWS_SG_ID"
+      - name: Use Terraform Output
+        run: echo "The AWS Security Group ID is $AWS_SG_ID"
