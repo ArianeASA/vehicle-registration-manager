@@ -96,7 +96,7 @@ jobs:
 
       - name: Update GitHub Secret
         env:
-          GITHUB_TOKEN: ${{ github.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MY_SECRET: ${{ env.AWS_SECURITY_GROUP_ID }}
         run: |
           curl -X PUT \
