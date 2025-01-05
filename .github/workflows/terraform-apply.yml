@@ -155,8 +155,7 @@ jobs:
 #              -var "db_schema=${{ secrets.DB_SCHEMA }}" \
 #              -var "scope=${{ secrets.DB_SCOPE }}"
 
-
-  get_remote_state:
+  get_outputs:
     needs: terraform-apply
     name: Terraform-output
     environment: production
@@ -165,16 +164,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Get remote state
-        uses: dflook/terraform-remote-state@v1
-        id: remote-state
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          backend_type: s3
-          backend_config: |
-            bucket=terraforms-bucket
-            key="states-${{inputs.app_name}}-ecs.tfstate"
-            region=${{ secrets.AWS_REGION }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Use Terraform output
+      - name: Download Terraform state file
         run: |
-          echo "Service URL: ${{ steps.remote-state.outputs }}"
+          aws s3 cp s3://seu-bucket/caminho/para/$file_name "states-${{inputs.app_name}}-ecs.tfstate"
+
+      - name: Extract outputs from state file
+        run: |
+          python extract_outputs.py "states-${{inputs.app_name}}-ecs.tfstate"
