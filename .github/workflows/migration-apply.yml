@@ -23,7 +23,7 @@ jobs:
       - name: Add IP to Security Group
         uses: passeidireto/aws-add-ip-to-security-group-action@v1.0.0
         with:
-          aws_security_group_ids:  ${{ vars.AWS_SECURITY_GROUP_ID }}"
+          aws_security_group_ids:  ${{ vars.AWS_SECURITY_GROUP_ID }}
           port_range: '${{ secrets.DB_PORT }}-${{ secrets.DB_PORT }}'
 
       - name: Install Go
