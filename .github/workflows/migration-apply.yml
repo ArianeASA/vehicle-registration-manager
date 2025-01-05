@@ -18,12 +18,12 @@ jobs:
 
       - name: Use the environment variable
         run: |
-          echo "The security group is ${{ env.AWS_SECURITY_GROUP_ID }}"
+          echo "The security group is ${{ vars.AWS_SECURITY_GROUP_ID }}"
 
       - name: Add IP to Security Group
         uses: passeidireto/aws-add-ip-to-security-group-action@v1.0.0
         with:
-          aws_security_group_ids:  ${{ env.AWS_SECURITY_GROUP_ID }}"
+          aws_security_group_ids:  ${{ vars.AWS_SECURITY_GROUP_ID }}"
           port_range: '${{ secrets.DB_PORT }}-${{ secrets.DB_PORT }}'
 
       - name: Install Go
