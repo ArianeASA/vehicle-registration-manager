@@ -87,25 +87,29 @@ jobs:
               -var "db_schema=${{ secrets.DB_SCHEMA }}" \
               -var "scope=${{ secrets.DB_SCOPE }}"
 
-#      - name: Capture Terraform Output
-#        id: capture_output
-#        run: |
-#          echo "AWS_SG_ID<<EOF" >> $GITHUB_ENV
-#          terraform output -raw rds_security_group_id >> $GITHUB_ENV
-#          echo "EOF" >> $GITHUB_ENV
       - name: Capture Terraform Output
         id: capture_output
         run: |
           AWS_SG_ID=$(terraform output -raw rds_security_group_id)
-          echo "AWS_SG_ID=$AWS_SG_ID" >> $GITHUB_ENV
+          echo "AWS_SG_ID<<EOF" >> $GITHUB_ENV
+          echo "$AWS_SG_ID" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Update GitHub Secret
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_APP }}
           MY_SECRET: ${{ env.AWS_SG_ID }}
         run: |
-          curl -v -X PUT \
+          curl -L \
+            -X PATCH \
+            -H "Accept: application/vnd.github+json" \
             -H "Authorization: token $GITHUB_TOKEN" \
-            -H "Content-Type: application/json" \
-            -d "{\"encrypted_value\":\"$MY_SECRET\"}" \
-            https://api.github.com/repos/ArianeASA/vehicle-registration-manager/actions/secrets/AWS_SECURITY_GROUP_ID
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/ArianeASA/vehicle-registration-manager/environments/production/variables/AWS_SECURITY_GROUP_ID \
+            -d '{"name":AWS_SECURITY_GROUP_ID","value":"$MY_SECRET"}'
+#          curl -v -X PUT \
+#            -H "Authorization: token $GITHUB_TOKEN" \
+#            -H "Content-Type: application/json" \
+#            -d "{\"encrypted_value\":\"$MY_SECRET\"}" \
+#            https://api.github.com/repos/ArianeASA/vehicle-registration-manager/actions/secrets/AWS_SECURITY_GROUP_ID
+          
