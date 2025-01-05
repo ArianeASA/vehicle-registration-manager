@@ -104,7 +104,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.TOKEN_APP }}
           MY_SECRET: ${{ env.AWS_SG_ID }}
         run: |
-          curl -X PUT \
+          curl -v -X PUT \
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Content-Type: application/json" \
             -d "{\"encrypted_value\":\"$MY_SECRET\"}" \
