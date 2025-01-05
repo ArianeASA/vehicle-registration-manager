@@ -90,8 +90,9 @@ jobs:
       - name: Capture Terraform Output
         id: capture_output
         run: |
-          AWS_SG_ID=$(terraform output -raw rds_security_group_id)
+          terraform refresh
           terraform output -raw rds_security_group_id
+          AWS_SG_ID=$(terraform output -raw rds_security_group_id)
           echo "AWS_SG_ID<<EOF" >> $GITHUB_ENV
           echo "$AWS_SG_ID" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
