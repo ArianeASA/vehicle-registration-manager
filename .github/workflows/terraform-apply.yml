@@ -102,5 +102,5 @@ jobs:
           curl -X PUT \
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Content-Type: application/json" \
-            -d '{"encrypted_value":"'"$MY_SECRET'"}' \
+            -d "{\"encrypted_value\":\"$MY_SECRET\"}" \
             https://api.github.com/repos/ArianeASA/vehicle-registration-manager/actions/secrets/AWS_SECURITY_GROUP_ID
