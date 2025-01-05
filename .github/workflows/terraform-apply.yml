@@ -96,11 +96,11 @@ jobs:
 
       - name: Update GitHub Secret
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN_APP }}
           MY_SECRET: ${{ env.AWS_SECURITY_GROUP_ID }}
         run: |
           curl -X PUT \
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Content-Type: application/json" \
-            -d '{"encrypted_value":"'"$AWS_SECURITY_GROUP_ID"'"}' \
+            -d '{"encrypted_value":"'"$MY_SECRET'"}' \
             https://api.github.com/repos/ArianeASA/vehicle-registration-manager/actions/secrets/AWS_SECURITY_GROUP_ID
