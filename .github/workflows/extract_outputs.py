@@ -18,11 +18,14 @@ for key, value in outputs.items():
     print(f"{key}: {value['value']}")
 
 # Extrair o valor do output desejado
-desired_output = outputs.get('your_output_name', {}).get('value', '')
+desired_output = outputs.get(output_name, {}).get('value', '')
 print(f"Output desejado: {desired_output}")
 
 # Escrever o valor no arquivo GITHUB_ENV
 env_file = os.getenv('GITHUB_ENV')
-with open(env_file, "a") as myfile:
-    myfile.write(f"{output_name.upper()}={desired_output}\n")
+if env_file:
+    with open(env_file, "a") as myfile:
+        myfile.write(f"{output_name.upper()}={desired_output}\n")
+else:
+    print(f"Error: GITHUB_ENV not found. Cannot set {output_name.upper()} environment variable.")
 
