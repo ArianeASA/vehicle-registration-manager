@@ -153,10 +153,6 @@ jobs:
               -var "db_schema=${{ secrets.DB_SCHEMA }}" \
               -var "scope=${{ secrets.DB_SCOPE }}"
 
-
-      - name: Terraform Refresh State
-        run: terraform apply -refresh-only
-
       - name: Capture Terraform Output
         id: capture_output
         run: |
