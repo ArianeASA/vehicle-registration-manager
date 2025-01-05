@@ -87,17 +87,7 @@ jobs:
               -var "db_schema=${{ secrets.DB_SCHEMA }}" \
               -var "scope=${{ secrets.DB_SCOPE }}"
 
-      - name: Terraform Refresh State
-        run: terraform apply -refresh-only
 
-      - name: Capture Terraform Output
-        id: capture_output
-        run: |
-          AWS_SG_ID=$(terraform output -raw rds_security_group_id)
-          echo "AWS_SG_ID=$AWS_SG_ID" >> $GITHUB_ENV
-
-      - name: Use Terraform Output
-        run: echo "The AWS Security Group ID is ${{ env.AWS_SG_ID }}"
 #          AWS_SG_ID=$(terraform output -raw rds_security_group_id)
 #          echo "AWS_SG_ID<<EOF" >> $GITHUB_ENV
 #          echo "$AWS_SG_ID" >> $GITHUB_ENV
@@ -123,3 +113,55 @@ jobs:
 #            -d "{\"encrypted_value\":\"$MY_SECRET\"}" \
 #            https://api.github.com/repos/ArianeASA/vehicle-registration-manager/actions/secrets/AWS_SECURITY_GROUP_ID
 
+  terraform-output:
+    name: Terraform
+    runs-on: ubuntu-latest
+    environment: production
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+      - name: Terraform Init
+        run: |
+          terraform -chdir=deployments init \
+              -backend-config="key=states-${{inputs.app_name}}-ecs" \
+              -backend-config="bucket=terraforms-bucket" \
+              -backend-config="region=${{ secrets.AWS_REGION }}" \
+              -var "db_username=${{ secrets.DB_USERNAME }}" \
+              -var "db_password=${{ secrets.DB_PASSWORD }}" \
+              -var "db_name=${{ secrets.DB_NAME }}" \
+              -var "db_driver=${{ secrets.DB_DRIVER }}" \
+              -var "db_schema=${{ secrets.DB_SCHEMA }}" \
+              -var "scope=${{ secrets.DB_SCOPE }}"
+
+
+      - name: Terraform Refresh State
+        run: terraform apply -refresh-only
+
+      - name: Capture Terraform Output
+        id: capture_output
+        run: |
+          AWS_SG_ID=$(terraform output -raw rds_security_group_id)
+          echo "AWS_SG_ID=$AWS_SG_ID" >> $GITHUB_ENV
+
+      - name: Use Terraform Output
+        run: echo "The AWS Security Group ID is ${{ env.AWS_SG_ID }}"
