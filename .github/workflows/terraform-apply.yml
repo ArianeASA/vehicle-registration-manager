@@ -86,3 +86,20 @@ jobs:
               -var "db_driver=${{ secrets.DB_DRIVER }}" \
               -var "db_schema=${{ secrets.DB_SCHEMA }}" \
               -var "scope=${{ secrets.DB_SCOPE }}"
+
+      - name: Capture Terraform Outputs
+        id: capture_outputs
+        run: |
+          AWS_SECURITY_GROUP_ID=$(terraform output -raw rds_security_group_id)
+          echo "AWS_SECURITY_GROUP_ID=$AWS_SECURITY_GROUP_ID" >> $GITHUB_ENV
+
+      - name: Update GitHub Secret
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MY_SECRET: ${{ env.AWS_SECURITY_GROUP_ID }}
+        run: |
+          curl -X PUT \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"encrypted_value":"'"$AWS_SECURITY_GROUP_ID"'"}' \
+            https://api.github.com/repos/owner/repo/actions/secrets/AWS_SECURITY_GROUP_ID
