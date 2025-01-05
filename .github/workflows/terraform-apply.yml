@@ -163,7 +163,7 @@ jobs:
 
       - name: Terraform Output
         run: |
-          terraform output
+          terraform output -json
           terraform output -json > output.json
 
 #      - name: Capture Terraform Output
