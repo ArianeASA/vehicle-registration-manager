@@ -159,13 +159,20 @@ jobs:
 #            -var 'access_key=${{ secrets.AWS_ACCESS_KEY_ID }}' \
 #            -var 'secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}'
 
-      - name: Capture Terraform Output
-        id: capture_output
-        run: |
-          AWS_SG_ID=$(terraform output -raw rds_security_group_id)
-          echo "AWS_SG_ID<<EOF" >> $GITHUB_ENV
-          echo "$AWS_SG_ID" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
 
-      - name: Use Terraform Output
-        run: echo "The AWS Security Group ID is $AWS_SG_ID"
+
+      - name: Terraform Output
+        run: |
+          terraform output
+          terraform output -json > output.json
+
+#      - name: Capture Terraform Output
+#        id: capture_output
+#        run: |
+#          AWS_SG_ID=$(terraform output -raw rds_security_group_id)
+#          echo "AWS_SG_ID<<EOF" >> $GITHUB_ENV
+#          echo "$AWS_SG_ID" >> $GITHUB_ENV
+#          echo "EOF" >> $GITHUB_ENV
+#
+#      - name: Use Terraform Output
+#        run: echo "The AWS Security Group ID is $AWS_SG_ID"
