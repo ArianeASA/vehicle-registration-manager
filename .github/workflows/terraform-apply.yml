@@ -91,6 +91,7 @@ jobs:
         id: capture_output
         run: |
           AWS_SG_ID=$(terraform output -raw rds_security_group_id)
+          echo terraform output -raw rds_security_group_id
           echo "AWS_SG_ID<<EOF" >> $GITHUB_ENV
           echo "$AWS_SG_ID" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
@@ -106,7 +107,7 @@ jobs:
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             -d "{\"name\":\"AWS_SECURITY_GROUP_ID\",\"value\":\"$MY_SECRET\"}"
-            https://api.github.com/repos/ArianeASA/vehicle-registration-manager/environments/production/variables/AWS_SECURITY_GROUP_ID
+                https://api.github.com/repos/ArianeASA/vehicle-registration-manager/environments/production/variables/AWS_SECURITY_GROUP_ID
           
 
 #          curl -v -X PUT \
