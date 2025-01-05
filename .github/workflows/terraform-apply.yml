@@ -177,4 +177,4 @@ jobs:
 
       - name: Use Terraform output
         run: |
-          echo "Service URL: ${{ steps.remote-state.outputs.rds_security_group_id }}"
+          echo "Service URL: ${{ steps.remote-state.outputs }}"
