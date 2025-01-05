@@ -90,8 +90,13 @@ jobs:
       - name: Capture Terraform Output
         id: capture_output
         run: |
-          terraform refresh
-          terraform output -raw rds_security_group_id
+          terraform -chdir=deployments refresh -backend-config="key=states-${{inputs.app_name}}-ecs" \
+              -backend-config="bucket=terraforms-bucket" \
+              -backend-config="region=${{ secrets.AWS_REGION }}"
+          terraform -chdir=deployments output -backend-config="key=states-${{inputs.app_name}}-ecs" \
+              -backend-config="bucket=terraforms-bucket" \
+              -backend-config="region=${{ secrets.AWS_REGION }}" \ 
+              -raw rds_security_group_id
           AWS_SG_ID=$(terraform output -raw rds_security_group_id)
           echo "AWS_SG_ID<<EOF" >> $GITHUB_ENV
           echo "$AWS_SG_ID" >> $GITHUB_ENV
