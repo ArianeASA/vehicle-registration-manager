@@ -90,14 +90,14 @@ jobs:
       - name: Capture Terraform Output
         id: capture_output
         run: |
-          echo "AWS_SECURITY_GROUP_ID<<EOF" >> $GITHUB_ENV
+          echo "AWS_SG_ID<<EOF" >> $GITHUB_ENV
           terraform output -raw rds_security_group_id >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
       - name: Update GitHub Secret
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_APP }}
-          MY_SECRET: ${{ env.AWS_SECURITY_GROUP_ID }}
+          MY_SECRET: ${{ env.AWS_SG_ID }}
         run: |
           curl -X PUT \
             -H "Authorization: token $GITHUB_TOKEN" \
