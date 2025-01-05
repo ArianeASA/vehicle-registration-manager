@@ -81,9 +81,18 @@ jobs:
           goose -dir $GOOSE_MIGRATIONS_DIR up
           goose -dir $GOOSE_MIGRATIONS_DIR status
 
+      - name: Set output based on test result
+        id: set_output
+        run: |
+          if [ "${{ steps.apply-migrations.conclusion }}" == "failure" ]; then
+            echo "migration_failed=true" >> $GITHUB_OUTPUT
+          else
+            echo "migration_failed=false" >> $GITHUB_OUTPUT
+          fi
+
   rollback:
     needs: migrate
-    if: ${{ steps.apply-migrations.conclusion == 'failure' }}
+    if: ${{ needs.migrate.outputs.migration_failed == 'true' }}
     environment: production
     runs-on: ubuntu-latest
     steps:
