@@ -90,9 +90,10 @@ jobs:
       - name: Capture Terraform Outputs
         id: capture_outputs
         run: |
-          AWS_SECURITY_GROUP_ID=$(terraform output -raw rds_security_group_id)
-          echo "AWS_SECURITY_GROUP_ID=$AWS_SECURITY_GROUP_ID" >> $GITHUB_ENV
+          echo "AWS_SECURITY_GROUP_ID=$(terraform output -raw rds_security_group_id)" >> $GITHUB_ENV
 
+      #          AWS_SECURITY_GROUP_ID=$(terraform output -raw rds_security_group_id)
+#          echo "AWS_SECURITY_GROUP_ID=$AWS_SECURITY_GROUP_ID" >> $GITHUB_ENV
       - name: Update GitHub Secret
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
