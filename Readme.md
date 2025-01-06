@@ -1,3 +1,5 @@
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=ArianeASA_vehicle-registration-manager&metric=coverage)](https://sonarcloud.io/summary/overall?id=ArianeASA_vehicle-registration-manager)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ArianeASA_vehicle-registration-manager&metric=alert_status)](https://sonarcloud.io/summary/overall?id=ArianeASA_vehicle-registration-manager)
 [![SonarQube Pipeline](https://github.com/ArianeASA/vehicle-registration-manager/actions/workflows/sonar.yml/badge.svg)](https://github.com/ArianeASA/vehicle-registration-manager/actions/workflows/sonar.yml)
 [![Pre-deployment Pipeline](https://github.com/ArianeASA/vehicle-registration-manager/actions/workflows/build.yml/badge.svg)](https://github.com/ArianeASA/vehicle-registration-manager/actions/workflows/build.yml)
 [![Migration apply](https://github.com/ArianeASA/vehicle-registration-manager/actions/workflows/migration-apply.yml/badge.svg?branch=develop)](https://github.com/ArianeASA/vehicle-registration-manager/actions/workflows/migration-apply.yml)
