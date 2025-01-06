@@ -28,8 +28,8 @@ func (suite *ListVehiclesTestSuite) SetupSubTest() {
 	suite.usecase = list.NewListVehicles(suite.repo)
 	suite.tracer = tracer.NewFakeTracer()
 	suite.vehicles = []domains.Vehicle{
-		{ID: "1", Brand: "Toyota", Model: "Corolla", Year: 2020, Color: "Blue", Price: 20000},
-		{ID: "2", Brand: "Honda", Model: "Civic", Year: 2019, Color: "Red", Price: 18000},
+		{ID: "1", Brand: "Toyota", Model: "Corolla", Year: 2020, Color: "Blue", Price: 20000, Status: "FOR_SALE", LicensePlate: "44"},
+		{ID: "2", Brand: "Honda", Model: "Civic", Year: 2019, Color: "Red", Price: 18000, Status: "FOR_SALE", LicensePlate: "55"},
 	}
 }
 

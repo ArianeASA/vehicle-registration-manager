@@ -19,10 +19,10 @@ func NewVehicleRepository(config configs.DatabaseConfigs) *VehicleRepository {
 }
 
 const (
-	insert   = "INSERT INTO vehicles (id, brand, model, year, color, price) VALUES ($1, $2, $3, $4, $5, $6)"
-	update   = "UPDATE vehicles SET brand=$1, model=$2, year=$3, color=$4, price=$5 WHERE id=$6"
-	findAll  = "SELECT id, brand, model, year, color, price FROM vehicles"
-	findByID = "SELECT id, brand, model, year, color, price FROM vehicles WHERE id=$1"
+	insert   = "INSERT INTO vehicles (id, brand, model, year, color, price, status, license_plate) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)"
+	update   = "UPDATE vehicles SET brand=$1, model=$2, year=$3, color=$4, price=$5, status=$6 WHERE id=$7"
+	findAll  = "SELECT id, brand, model, year, color, price, status, license_plate FROM vehicles"
+	findByID = "SELECT id, brand, model, year, color, price, status, license_plate FROM vehicles WHERE id=$1"
 )
 
 const (
@@ -44,7 +44,7 @@ func (r *VehicleRepository) Save(tcr *tracer.Tracer, vehicle domains.Vehicle) er
 		}
 	}(stmt)
 
-	_, err = stmt.Exec(vehicle.ID, vehicle.Brand, vehicle.Model, vehicle.Year, vehicle.Color, vehicle.Price)
+	_, err = stmt.Exec(vehicle.ID, vehicle.Brand, vehicle.Model, vehicle.Year, vehicle.Color, vehicle.Price, vehicle.Status, vehicle.LicensePlate)
 	if err != nil {
 		tcr.Logger.Error("failed to execute statement", err)
 		return err
@@ -65,7 +65,7 @@ func (r *VehicleRepository) Update(tcr *tracer.Tracer, vehicle domains.Vehicle) 
 		}
 	}(stmt)
 
-	_, err = stmt.Exec(vehicle.Brand, vehicle.Model, vehicle.Year, vehicle.Color, vehicle.Price, vehicle.ID)
+	_, err = stmt.Exec(vehicle.Brand, vehicle.Model, vehicle.Year, vehicle.Color, vehicle.Price, vehicle.ID, vehicle.Status)
 	if err != nil {
 		tcr.Logger.Error("failed to execute statement", err)
 		return err
@@ -89,7 +89,8 @@ func (r *VehicleRepository) FindAll(tcr *tracer.Tracer) ([]domains.Vehicle, erro
 	var vehicles []domains.Vehicle
 	for rows.Next() {
 		var vehicle entities.Vehicle
-		if err := rows.Scan(&vehicle.ID, &vehicle.Brand, &vehicle.Model, &vehicle.Year, &vehicle.Color, &vehicle.Price); err != nil {
+		if err := rows.Scan(&vehicle.ID, &vehicle.Brand, &vehicle.Model, &vehicle.Year, &vehicle.Color, &vehicle.Price,
+			&vehicle.Status, &vehicle.LicensePlate); err != nil {
 			tcr.Logger.Error("failed to scan", err)
 			return nil, errors.New("failed to scan")
 		}
@@ -112,7 +113,8 @@ func (r *VehicleRepository) FindByID(tcr *tracer.Tracer, id string) (domains.Veh
 	}(stmt)
 
 	var vehicle entities.Vehicle
-	err = stmt.QueryRow(id).Scan(&vehicle.ID, &vehicle.Brand, &vehicle.Model, &vehicle.Year, &vehicle.Color, &vehicle.Price)
+	err = stmt.QueryRow(id).Scan(&vehicle.ID, &vehicle.Brand, &vehicle.Model, &vehicle.Year, &vehicle.Color, &vehicle.Price,
+		&vehicle.Status, &vehicle.LicensePlate)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		tcr.Logger.Error("failed to query row", err)
 		return domains.Vehicle{}, err

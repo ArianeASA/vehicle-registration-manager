@@ -32,5 +32,10 @@ func (uc *updateVehicle) Execute(tcr *tracer.Tracer, vehicle domains.Vehicle) er
 		return domains.ErrVehicleNotFound
 	}
 
-	return uc.repo.Update(tcr, vehicle)
+	err = vehicleDB.UpdateFields(&vehicle)
+	if err != nil {
+		tcr.Logger.Error("Failed to update vehicle fields", err)
+		return err
+	}
+	return uc.repo.Update(tcr, vehicleDB)
 }

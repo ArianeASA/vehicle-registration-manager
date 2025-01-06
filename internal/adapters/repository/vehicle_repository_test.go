@@ -38,14 +38,14 @@ func TestVehicleRepositoryTestSuite(t *testing.T) {
 	suite.Run(t, new(VehicleRepositoryTestSuite))
 }
 
-var columns = []string{"id", "brand", "model", "year", "color", "price"}
+var columns = []string{"id", "brand", "model", "year", "color", "price", "status", "license_plate"}
 
 func (suite *VehicleRepositoryTestSuite) TestFindByID() {
 	vehicleID := "1"
-	findByID := `SELECT id, brand, model, year, color, price FROM vehicles WHERE id=\$1`
+	findByID := `SELECT id, brand, model, year, color, price, status, license_plate FROM vehicles WHERE id=\$1`
 	suite.Run("Should return success", func() {
 		row := suite.sqlmockX.NewRows(columns).
-			AddRow(vehicleID, "Toyota", "Corolla", 2020, "Blue", 20000)
+			AddRow(vehicleID, "Toyota", "Corolla", 2020, "Blue", 20000, "FOR_SALE", "44")
 		suite.sqlmockX.ExpectPrepare(findByID).
 			ExpectQuery().
 			WithArgs(vehicleID).
@@ -94,11 +94,11 @@ func (suite *VehicleRepositoryTestSuite) TestFindByID() {
 }
 
 func (suite *VehicleRepositoryTestSuite) TestFindAll() {
-	findAll := `SELECT id, brand, model, year, color, price FROM vehicles`
+	findAll := `SELECT id, brand, model, year, color, price, status, license_plate FROM vehicles`
 	suite.Run("Should return success", func() {
 		row := suite.sqlmockX.NewRows(columns).
-			AddRow("1", "Toyota", "Corolla", 2020, "Blue", 20000).
-			AddRow("2", "Toyota", "Corolla", 2020, "Green", 20000)
+			AddRow("1", "Toyota", "Corolla", 2020, "Blue", 20000, "FOR_SALE", "44").
+			AddRow("2", "Toyota", "Corolla", 2020, "Green", 20000, "FOR_SALE", "44")
 		suite.sqlmockX.ExpectQuery(findAll).WillReturnRows(row)
 
 		vehicles, err := suite.repo.FindAll(suite.tracer)
@@ -120,7 +120,7 @@ func (suite *VehicleRepositoryTestSuite) TestFindAll() {
 		expected := errors.New("failed to scan")
 
 		row := suite.sqlmockX.NewRows(columns).
-			AddRow(1, "Toyota", "Corolla", 2020.66, "Blue", "44")
+			AddRow(1, "Toyota", "Corolla", 2020.66, "Blue", "44", "FOR_SALE", "44")
 
 		suite.sqlmockX.ExpectQuery(findAll).WillReturnRows(row)
 
@@ -133,20 +133,21 @@ func (suite *VehicleRepositoryTestSuite) TestFindAll() {
 }
 
 func (suite *VehicleRepositoryTestSuite) TestSave() {
-	const insert = `INSERT INTO vehicles \(id, brand, model, year, color, price\) VALUES \(\$1, \$2, \$3, \$4, \$5, \$6\)`
-
+	const insert = `INSERT INTO vehicles \(id, brand, model, year, color, price, status, license_plate\) VALUES \(\$1, \$2, \$3, \$4, \$5, \$6, \$7, \$8\)`
 	domain := domains.Vehicle{
-		ID:    "1",
-		Brand: "Toyota",
-		Model: "Corolla",
-		Year:  2020,
-		Color: "Blue",
-		Price: 20000.65,
+		ID:           "1",
+		Brand:        "Toyota",
+		Model:        "Corolla",
+		Year:         2020,
+		Color:        "Blue",
+		Price:        20000.65,
+		Status:       "FOR_SALE",
+		LicensePlate: "44",
 	}
 	suite.Run("Should return success", func() {
 		suite.sqlmockX.ExpectPrepare(insert).
 			ExpectExec().
-			WithArgs("1", "Toyota", "Corolla", 2020, "Blue", 20000.65).
+			WithArgs("1", "Toyota", "Corolla", 2020, "Blue", 20000.65, "FOR_SALE", "44").
 			WillReturnResult(sqlmock.NewResult(1, 1))
 
 		err := suite.repo.Save(suite.tracer, domain)
@@ -166,7 +167,7 @@ func (suite *VehicleRepositoryTestSuite) TestSave() {
 		expected := errors.New("error in exec")
 		suite.sqlmockX.ExpectPrepare(insert).
 			ExpectExec().
-			WithArgs("1", "Toyota", "Corolla", 2020, "Blue", 20000.65).
+			WithArgs("1", "Toyota", "Corolla", 2020, "Blue", 20000.65, "FOR_SALE", "44").
 			WillReturnError(expected)
 
 		err := suite.repo.Save(suite.tracer, domain)
@@ -176,20 +177,22 @@ func (suite *VehicleRepositoryTestSuite) TestSave() {
 }
 
 func (suite *VehicleRepositoryTestSuite) TestUpdate() {
-	const update = `UPDATE vehicles SET brand=\$1, model=\$2, year=\$3, color=\$4, price=\$5 WHERE id=\$6`
+	const update = `UPDATE vehicles SET brand=\$1, model=\$2, year=\$3, color=\$4, price=\$5, status=\$6  WHERE id=\$7`
 
 	domain := domains.Vehicle{
-		ID:    "1",
-		Brand: "Toyota",
-		Model: "Corolla",
-		Year:  2020,
-		Color: "Blue",
-		Price: 20000.65,
+		ID:           "1",
+		Brand:        "Toyota",
+		Model:        "Corolla",
+		Year:         2020,
+		Color:        "Blue",
+		Price:        20000.65,
+		Status:       "CANCELED",
+		LicensePlate: "44",
 	}
 	suite.Run("Should return success", func() {
 		suite.sqlmockX.ExpectPrepare(update).
 			ExpectExec().
-			WithArgs("Toyota", "Corolla", 2020, "Blue", 20000.65, "1").
+			WithArgs("Toyota", "Corolla", 2020, "Blue", 20000.65, "1", "CANCELED").
 			WillReturnResult(sqlmock.NewResult(1, 1))
 
 		err := suite.repo.Update(suite.tracer, domain)
@@ -209,7 +212,7 @@ func (suite *VehicleRepositoryTestSuite) TestUpdate() {
 		expected := errors.New("error in exec")
 		suite.sqlmockX.ExpectPrepare(update).
 			ExpectExec().
-			WithArgs("Toyota", "Corolla", 2020, "Blue", 20000.65, "1").
+			WithArgs("Toyota", "Corolla", 2020, "Blue", 20000.65, "1", "CANCELED").
 			WillReturnError(expected)
 
 		err := suite.repo.Update(suite.tracer, domain)
