@@ -30,6 +30,7 @@
                 "tags": [
                     "vehicles"
                 ],
+                "summary": "Search all Vehicles",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -61,6 +62,7 @@
                 "tags": [
                     "vehicles"
                 ],
+                "summary": "Register Vehicle",
                 "parameters": [
                     {
                         "description": "Object Vehicle",
@@ -103,6 +105,7 @@
                 "tags": [
                     "vehicles"
                 ],
+                "summary": "Search Vehicle by ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -150,7 +153,7 @@
                 "tags": [
                     "vehicles"
                 ],
-                "summary": "update a task status",
+                "summary": "Update Vehicle by ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -224,11 +227,17 @@
                 "color": {
                     "type": "string"
                 },
+                "license_plate": {
+                    "type": "string"
+                },
                 "model": {
                     "type": "string"
                 },
                 "price": {
                     "type": "number"
+                },
+                "status": {
+                    "type": "string"
                 },
                 "year": {
                     "type": "integer"
@@ -247,11 +256,17 @@
                 "id": {
                     "type": "string"
                 },
+                "license_plate": {
+                    "type": "string"
+                },
                 "model": {
                     "type": "string"
                 },
                 "price": {
                     "type": "number"
+                },
+                "status": {
+                    "type": "string"
                 },
                 "year": {
                     "type": "integer"

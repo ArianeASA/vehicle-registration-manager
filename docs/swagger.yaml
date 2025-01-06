@@ -19,10 +19,14 @@ definitions:
         type: string
       color:
         type: string
+      license_plate:
+        type: string
       model:
         type: string
       price:
         type: number
+      status:
+        type: string
       year:
         type: integer
     type: object
@@ -34,10 +38,14 @@ definitions:
         type: string
       id:
         type: string
+      license_plate:
+        type: string
       model:
         type: string
       price:
         type: number
+      status:
+        type: string
       year:
         type: integer
     type: object
@@ -73,6 +81,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http_errors.ProblemDetails'
+      summary: Search all Vehicles
       tags:
       - vehicles
   /vehicles/{id}:
@@ -105,6 +114,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http_errors.ProblemDetails'
+      summary: Search Vehicle by ID
       tags:
       - vehicles
     put:
@@ -139,7 +149,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http_errors.ProblemDetails'
-      summary: update a task status
+      summary: Update Vehicle by ID
       tags:
       - vehicles
   /vehicles/register:
@@ -167,6 +177,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/http_errors.ProblemDetails'
+      summary: Register Vehicle
       tags:
       - vehicles
 swagger: "2.0"

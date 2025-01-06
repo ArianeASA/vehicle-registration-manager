@@ -11,6 +11,7 @@ import (
 
 // @Title			Register Vehicle
 // @Description	Register vehicle
+// @Summary		Register Vehicle
 // @Tags			vehicles
 // @Accept			json
 // @Produce		json

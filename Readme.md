@@ -40,7 +40,7 @@ The Vehicle API allows you to manage vehicle information, adding new vehicles, u
    Use database type postgres to run the database in a Docker container.
    
    Configurations:
-   - POSTGRES_USER=yourusername
+      - POSTGRES_USER=yourusername
      - POSTGRES_PASSWORD=yourpassword
      - POSTGRES_DB=dealership
      - Schema: prod
@@ -67,6 +67,7 @@ The Vehicle API allows you to manage vehicle information, adding new vehicles, u
    The API documentation is available in the docs/swagger.json file. You can use Swagger UI to visualize and interact with the API.  
    The Swagger UI is available at http://localhost:8080/swagger/index.html.
 
+   ![img.png](img.png)
 
 5. **Run the application**:
     ```sh

@@ -11,6 +11,7 @@ import (
 
 // @Title			Search Vehicle
 // @Description	Search vehicle By ID
+// @Summary		Search Vehicle by ID
 // @Tags			vehicles
 // @Accept			json
 // @Produce		json

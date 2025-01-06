@@ -36,6 +36,7 @@ const docTemplate = `{
                 "tags": [
                     "vehicles"
                 ],
+                "summary": "Search all Vehicles",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -67,6 +68,7 @@ const docTemplate = `{
                 "tags": [
                     "vehicles"
                 ],
+                "summary": "Register Vehicle",
                 "parameters": [
                     {
                         "description": "Object Vehicle",
@@ -109,6 +111,7 @@ const docTemplate = `{
                 "tags": [
                     "vehicles"
                 ],
+                "summary": "Search Vehicle by ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -156,7 +159,7 @@ const docTemplate = `{
                 "tags": [
                     "vehicles"
                 ],
-                "summary": "update a task status",
+                "summary": "Update Vehicle by ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -230,11 +233,17 @@ const docTemplate = `{
                 "color": {
                     "type": "string"
                 },
+                "license_plate": {
+                    "type": "string"
+                },
                 "model": {
                     "type": "string"
                 },
                 "price": {
                     "type": "number"
+                },
+                "status": {
+                    "type": "string"
                 },
                 "year": {
                     "type": "integer"
@@ -253,11 +262,17 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "license_plate": {
+                    "type": "string"
+                },
                 "model": {
                     "type": "string"
                 },
                 "price": {
                     "type": "number"
+                },
+                "status": {
+                    "type": "string"
                 },
                 "year": {
                     "type": "integer"
