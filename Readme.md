@@ -9,7 +9,7 @@ This project is a sample server for managing vehicles, built with Go.
 
 ## Description
 
-The Vehicle API allows you to manage vehicle information, adding new vehicles, updating existing vehicles, and deleting vehicles.
+The Vehicle Registration Manager is a sample server application built with Go for managing vehicle data. It provides RESTful API endpoints for listing, searching, registering, and updating vehicles. The project includes database migration support using goose, and API documentation generated with Swagger. The application can be run locally or with Docker Compose for easy setup and deployment.
 
 ## Getting Started
 
