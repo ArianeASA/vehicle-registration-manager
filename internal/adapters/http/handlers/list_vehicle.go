@@ -9,6 +9,7 @@ import (
 
 // @Title			List Vehicles
 // @Description	List vehicles
+// @Summary		Search all Vehicles
 // @Tags			vehicles
 // @Accept			json
 // @Produce		json

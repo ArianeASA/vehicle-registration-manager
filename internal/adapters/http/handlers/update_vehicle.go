@@ -13,7 +13,7 @@ import (
 )
 
 // @Title			Update Vehicle
-// @Summary		update a task status
+// @Summary		Update Vehicle by ID
 // @Description	Update vehicle
 // @Tags			vehicles
 // @Accept			json
