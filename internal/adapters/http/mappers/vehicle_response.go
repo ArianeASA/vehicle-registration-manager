@@ -7,12 +7,14 @@ import (
 
 func DomainVehicleToResponseVehicle(vehicle domains.Vehicle) responses.Vehicle {
 	return responses.Vehicle{
-		Id:    vehicle.ID,
-		Brand: vehicle.Brand,
-		Model: vehicle.Model,
-		Year:  vehicle.Year,
-		Color: vehicle.Color,
-		Price: vehicle.Price,
+		Id:           vehicle.ID,
+		Brand:        vehicle.Brand,
+		Model:        vehicle.Model,
+		Year:         vehicle.Year,
+		Color:        vehicle.Color,
+		Price:        vehicle.Price,
+		LicensePlate: vehicle.LicensePlate,
+		Status:       vehicle.Status,
 	}
 }
 

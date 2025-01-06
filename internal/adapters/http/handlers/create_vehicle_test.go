@@ -30,14 +30,16 @@ func (suite *CreateVehicleHandlerTestSuite) SetupSubTest() {
 	setup()
 	router.HandleFunc("/vehicles/register", handler.HandleCreateVehicle).Methods(http.MethodPost)
 	suite.vehicle = requests.Vehicle{
-		Brand: "Toyota", Model: "Corolla", Year: 2020, Color: "Blue", Price: 20000,
+		Brand: "Toyota", Model: "Corolla", Year: 2020, Color: "Blue", Price: 20000, Status: "FOR_SALE", LicensePlate: "TEST-X",
 	}
 	suite.domain = domains.Vehicle{
-		Brand: suite.vehicle.Brand,
-		Model: suite.vehicle.Model,
-		Year:  suite.vehicle.Year,
-		Color: suite.vehicle.Color,
-		Price: suite.vehicle.Price,
+		Brand:        suite.vehicle.Brand,
+		Model:        suite.vehicle.Model,
+		Year:         suite.vehicle.Year,
+		Color:        suite.vehicle.Color,
+		Price:        suite.vehicle.Price,
+		Status:       suite.vehicle.Status,
+		LicensePlate: suite.vehicle.LicensePlate,
 	}
 	suite.vehicleEquals = func(v domains.Vehicle) bool {
 		return strings.EqualFold(v.Brand, suite.domain.Brand) &&
@@ -79,6 +81,21 @@ func (suite *CreateVehicleHandlerTestSuite) TestHandleCreateVehicle() {
 		err := json.NewDecoder(rr.Body).Decode(&problemDetails)
 		suite.NoError(err)
 		suite.Contains(problemDetails.Detail, "Failed to decode request body")
+	})
+
+	suite.Run("Should return BadRequest - invalid body", func() {
+		suite.vehicle.Brand = ""
+		body, _ := json.Marshal(suite.vehicle)
+		req := httptest.NewRequest(http.MethodPost, "/vehicles/register", bytes.NewBuffer(body))
+		rr := httptest.NewRecorder()
+
+		router.ServeHTTP(rr, req)
+
+		suite.Equal(http.StatusBadRequest, rr.Code)
+		var problemDetails http_errors.ProblemDetails
+		err := json.NewDecoder(rr.Body).Decode(&problemDetails)
+		suite.NoError(err)
+		suite.Contains(problemDetails.Detail, "Invalid request body")
 	})
 
 	suite.Run("Should return InternalServerError", func() {
