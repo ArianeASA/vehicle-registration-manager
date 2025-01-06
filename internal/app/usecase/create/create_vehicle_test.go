@@ -28,12 +28,14 @@ func (suite *CreateVehicleTestSuite) SetupSubTest() {
 	suite.usecase = create.NewCreateVehicle(suite.repo)
 	suite.tracer = tracer.NewFakeTracer()
 	suite.vehicle = domains.Vehicle{
-		ID:    "1",
-		Brand: "Toyota",
-		Model: "Corolla",
-		Year:  2020,
-		Color: "Blue",
-		Price: 20000,
+		ID:           "1",
+		Brand:        "Toyota",
+		Model:        "Corolla",
+		Year:         2020,
+		Color:        "Blue",
+		Price:        20000,
+		Status:       "FOR_SALE",
+		LicensePlate: "TEST-X",
 	}
 }
 

@@ -30,12 +30,14 @@ func (suite *SearchVehicleTestSuite) SetupSubTest() {
 	suite.tracer = tracer.NewFakeTracer()
 	suite.vehicleID = "1"
 	suite.vehicle = domains.Vehicle{
-		ID:    suite.vehicleID,
-		Brand: "Toyota",
-		Model: "Corolla",
-		Year:  2020,
-		Color: "Blue",
-		Price: 20000,
+		ID:           suite.vehicleID,
+		Brand:        "Toyota",
+		Model:        "Corolla",
+		Year:         2020,
+		Color:        "Blue",
+		Price:        20000,
+		Status:       "FOR_SALE",
+		LicensePlate: "TEST-X",
 	}
 }
 

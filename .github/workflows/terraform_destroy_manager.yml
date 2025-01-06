@@ -5,6 +5,7 @@ on:
 jobs:
   terraform-destroy-vehicle-registration-app:
     uses: ./.github/workflows/terraform_destroy.yml
+    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main'
     with:
       app_name: 'vehicle-manager-db'
     secrets: inherit

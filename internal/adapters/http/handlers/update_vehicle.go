@@ -23,7 +23,7 @@ import (
 // @Failure		500		{object}	http_errors.ProblemDetails
 // @Failure		400		{object}	http_errors.ProblemDetails
 // @Param			id		path		string				false	"Vehicle ID"
-// @Param			vehicle	body		requests.Vehicle	true	"Vehicle"	example({"brand":"string","model":"string","year":2022,"color":"string","price":474432})
+// @Param			vehicle	body		requests.Vehicle	true	"Vehicle"	example({"brand":"string","model":"string","year":2022,"color":"string","price":474432, "license_plate":"string", "status":"FOR_SALE"})
 // @Router			/vehicles/{id} [put]
 func (h *vehicleHandler) HandleUpdateVehicle(w http.ResponseWriter, r *http.Request) {
 	trc := tracer.NewTracer(r)

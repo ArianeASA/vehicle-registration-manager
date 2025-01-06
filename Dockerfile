@@ -10,6 +10,3 @@ RUN go mod download \
 
 CMD ["./main"]
 
-
-# docker build -t vehicle-ap .
-# docker run -p 8080:8080 vehicle-ap

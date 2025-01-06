@@ -30,7 +30,7 @@ jobs:
     - name: Terraform Init
       run: |
         terraform -chdir=deployments init \
-            -backend-config="key=states-${{ inputs.app_name }}-ecs" \
+            -backend-config="key=states-${{ inputs.app_name }}-ecs.tfstate" \
             -backend-config="bucket=terraforms-bucket" \
             -backend-config="region=${{ secrets.AWS_REGION }}" \
             -var "db_username=${{ secrets.DB_USERNAME }}" \
