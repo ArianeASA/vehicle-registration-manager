@@ -1,3 +1,5 @@
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=ArianeASA_vehicle-registration-manager&metric=coverage)](https://sonarcloud.io/summary/overall?id=ArianeASA_vehicle-registration-manager)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ArianeASA_vehicle-registration-manager&metric=alert_status)](https://sonarcloud.io/summary/overall?id=ArianeASA_vehicle-registration-manager)
 [![SonarQube Pipeline](https://github.com/ArianeASA/vehicle-registration-manager/actions/workflows/sonar.yml/badge.svg)](https://github.com/ArianeASA/vehicle-registration-manager/actions/workflows/sonar.yml)
 [![Pre-deployment Pipeline](https://github.com/ArianeASA/vehicle-registration-manager/actions/workflows/build.yml/badge.svg)](https://github.com/ArianeASA/vehicle-registration-manager/actions/workflows/build.yml)
 [![Migration apply](https://github.com/ArianeASA/vehicle-registration-manager/actions/workflows/migration-apply.yml/badge.svg?branch=develop)](https://github.com/ArianeASA/vehicle-registration-manager/actions/workflows/migration-apply.yml)
@@ -7,7 +9,7 @@ This project is a sample server for managing vehicles, built with Go.
 
 ## Description
 
-The Vehicle API allows you to manage vehicle information, adding new vehicles, updating existing vehicles, and deleting vehicles.
+The Vehicle Registration Manager is a sample server application built with Go for managing vehicle data. It provides RESTful API endpoints for listing, searching, registering, and updating vehicles. The project includes database migration support using goose, and API documentation generated with Swagger. The application can be run locally or with Docker Compose for easy setup and deployment.
 
 ## Getting Started
 
